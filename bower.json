@@ -2,8 +2,8 @@
   "name": "polymer-apigility",
   "private": true,
   "dependencies": {
-    "polymer": "Polymer/polymer#master",
-    "iron-ajax": "Polymer/iron-ajax#master"
+    "polymer": "Polymer/polymer#^1.1.0",
+    "iron-ajax": "Polymer/iron-ajax#^1.0.6"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^1.0.0"
