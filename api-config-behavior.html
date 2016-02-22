@@ -32,9 +32,8 @@
                     try { headers = JSON.parse(headers); }
                     catch(e) { headers = null; }
                     break;
-                // TODO array and default
             }
-            // TODO merge
+
             if (headers) {
                 this.ironAjax.headers = headers;
             }

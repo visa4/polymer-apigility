@@ -27,18 +27,19 @@
       }
     },
 
-    /**
-     *
-     */
-    ready: function () {
-      // TODO Exception
-      this.ironAjax.addEventListener('response', this.paginableHandler.bind(this));
-    },
 
     observers: [
       'changePage(page)',
       'changePageSize(size)'
     ],
+
+    ready: function () {
+      this.ironAjax.addEventListener('response', this.paginableHandler.bind(this));
+    },
+
+    attached: function () {
+      this.finishLifeCicle = true;
+    },
 
     /**
      *
@@ -49,6 +50,20 @@
         this._setPageCount(e.detail.response.page_count);
         this._setTotalItems( e.detail.response.total_items);
       }
+    },
+
+    changePage: function (page) {
+      if (!this.finishLifeCicle) {
+        return;
+      }
+      this. getAll();
+    },
+
+    changePageSize: function (pageSize) {
+      if (!this.finishLifeCicle) {
+        return;
+      }
+      this. getAll();
     }
   };
 </script>
