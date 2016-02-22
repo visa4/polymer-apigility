@@ -1,0 +1,54 @@
+<script>
+
+  window.PolymerApigility = window.PolymerApigility || {};
+
+  PolymerApigility.RestPaginableBehaviorImp = {
+
+    properties: {
+
+      page: {
+        type: Number,
+        value: 1
+      },
+
+      pageSize: {
+        type: Number,
+        value: 10
+      },
+
+      pageCount: {
+        type: Number,
+        readOnly: true
+      },
+
+      totalItems: {
+        type: Number,
+        readOnly: true
+      }
+    },
+
+    /**
+     *
+     */
+    ready: function () {
+      // TODO Exception
+      this.ironAjax.addEventListener('response', this.paginableHandler.bind(this));
+    },
+
+    observers: [
+      'changePage(page)',
+      'changePageSize(size)'
+    ],
+
+    /**
+     *
+     * @param e
+     */
+    paginableHandler: function (e) {
+      if (e.detail.response._embedded) {
+        this._setPageCount(e.detail.response.page_count);
+        this._setTotalItems( e.detail.response.total_items);
+      }
+    }
+  };
+</script>
