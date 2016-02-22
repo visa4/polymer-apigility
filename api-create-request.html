@@ -14,24 +14,6 @@
         },
 
         /**
-         * Create request
-         *
-         * @param method string
-         * @param data object
-         * @param headers object
-         * @param query object
-         */
-        _createRequest: function (method, data, headers, query) {
-
-            this.ironAjax.url = this._buildUrl();
-            this.ironAjax.method = (method) ? method : this.method;
-            this.ironAjax.body = (data) ? data : null;
-            this.ironAjax.headers = this.requestHeaders;
-            this.ironAjax.params = (query) ? query : {};
-            this.ironAjax.generateRequest();
-        },
-
-        /**
          * An object that maps header names to header values
          *
          * @return {Object}
@@ -52,6 +34,24 @@
             }
 
             return headers;
+        },
+
+        /**
+         * Create request
+         *
+         * @param method string
+         * @param data object
+         * @param headers object
+         * @param query object
+         */
+        _createRequest: function (method, data, headers, query) {
+
+            this.ironAjax.url = this._buildUrl();
+            this.ironAjax.method = (method) ? method : this.method;
+            this.ironAjax.body = (data) ? data : null;
+            this.ironAjax.headers = this.requestHeaders;
+            this.ironAjax.params = (query) ? query : {};
+            this.ironAjax.generateRequest();
         },
 
         _buildUrl: function() {

@@ -1,0 +1,64 @@
+<script>
+
+  window.PolymerApigility = window.PolymerApigility || {};
+
+  PolymerApigility.RestUrlBehaviorImp = {
+
+    properties: {
+
+      /**
+       * Service root url
+       * e.g {{http://test}}
+       */
+      rootUrl: {
+        type: String
+      },
+
+      /**
+       * Service name
+       * e.g http://test/{{serviceName}}
+       */
+      serviceName: {
+        type: String
+      },
+
+      /**
+       * Entity identifier
+       * e.g http://test/nameTest/{{identify}}
+       */
+      identify: {
+        type: String
+      },
+
+      /**
+       * Service subname
+       * e.g http://test/{{subServiceName}}/nameTest/testIdentify
+       */
+      subServiceName: {
+        type: String
+      },
+
+      /**
+       * Service subname
+       * e.g http://test/testSubService/{{subIdentify}}/nameTest/testIdentify
+       */
+      subIdentify: {
+        type: String
+      }
+    },
+
+    _buildUrl: function() {
+      var url = this.rootUrl;
+      // Attach subService
+      if (this.subServiceName && this.subIdentify) {
+        url = url + '/' + this.subServiceName + '/' + this.subIdentify
+      }
+      // Attach Service
+      url = url + '/' + this.serviceName;
+      if (this.identify) {
+        url = url + '/' + this.identify;
+      }
+      return url;
+    }
+  };
+</script>
