@@ -24,28 +24,30 @@
         'get(identify, rootUrl)'
       ],
 
-      get: function(identify, rootUrl) {
-        this.createRequest('GET', identify);
+      get: function() {
+        // TODO add query params
+        this.createRequest('GET');
       },
 
       getAll: function() {
+        // TODO add query params and merge
         this.createRequest('GET', null, null, {"page": this.page, "page_size": this.pageSize});
       },
 
       post: function (data) {
-        this.createRequest('POST', null, data);
+        this.createRequest('POST', data);
       },
 
-      put: function (identify, data) {
-        this.createRequest('PUT', identify, data);
+      put: function (data) {
+        this.createRequest('PUT', data);
       },
 
       patch: function (identify, data) {
-        this.createRequest('PATCH', identify, data);
+        this.createRequest('PATCH', data);
       },
 
       delete: function(identify) {
-        this.createRequest('DELETE', identify);
+        this.createRequest('DELETE');
       }
     });
   </script>

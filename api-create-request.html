@@ -44,7 +44,7 @@
          * @param headers object
          * @param query object
          */
-        _createRequest: function (method, data, headers, query) {
+        createRequest: function (method, data, headers, query) {
 
             this.ironAjax.url = this._buildUrl();
             this.ironAjax.method = (method) ? method : this.method;
@@ -54,7 +54,7 @@
             this.ironAjax.generateRequest();
         },
 
-        _buildUrl: function() {
+        buildUrl: function() {
             throw 'Must be override method element implementation';
         }
     };
