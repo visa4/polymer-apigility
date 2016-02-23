@@ -42,39 +42,7 @@
         PolymerApigility.ApiCreateRequestBehaviorImp,
         PolymerApigility.RpcUrlBehaviorImp,
         PolymerApigility.RpcResponseBehaviorImp
-      ],
-
-      /**
-       * An object that maps header names to header values
-       *
-       * @return {Object}
-       */
-      get requestHeaders() {
-        var headers = {};
-        var header;
-
-        if (this.ironAjax.headers !== null && this.ironAjax.headers instanceof Object) {
-          for (header in this.ironAjax.headers) {
-            headers[header] = this.ironAjax.headers[header].toString();
-          }
-        }
-
-        if (this.headers !== null && this.headers instanceof Object) {
-          for (header in this.headers) {
-            headers[header] = this.headers[header].toString();
-          }
-        }
-
-        return headers;
-      },
-
-      createRequest : function(method, identify, data) {
-        this.ironAjax.method = (method) ? method : this.method;
-        this.ironAjax.headers = this.requestHeaders;
-        this.ironAjax.url = this._buildUrl(identify);
-        this.ironAjax.body = (data) ? data : null;
-        this.ironAjax.generateRequest();
-      }
+      ]
     });
   </script>
 

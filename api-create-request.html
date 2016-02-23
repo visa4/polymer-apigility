@@ -46,7 +46,7 @@
          */
         createRequest: function (method, data, headers, query) {
 
-            this.ironAjax.url = this._buildUrl();
+            this.ironAjax.url = this.buildUrl();
             this.ironAjax.method = (method) ? method : this.method;
             this.ironAjax.body = (data) ? data : null;
             this.ironAjax.headers = this.requestHeaders;
