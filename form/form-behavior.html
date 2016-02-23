@@ -1,0 +1,264 @@
+<link rel="import" href="../utils-behavior.html">
+
+<script>
+
+    window.PolymerApigility = window.PolymerApigility || {};
+
+    PolymerApigility.FormBehavior = {
+
+        listeners: {
+            'iron-form-element-register': '_registerElement',
+            'iron-form-element-unregister': '_unregisterElement',
+            'reset': '_onReset'
+        },
+
+        ready: function () {
+
+            // Holds all the custom elements registered with this form.
+            this._customElements = [];
+            // Holds the initial values of the custom elements registered with this form.
+            this._customElementsInitialValues = [];
+        },
+
+        /**
+         * Handler that is called when the native form fires a `reset` event
+         *
+         * @param {Event} event A `reset` event.
+         */
+        _onReset: function(event) {
+            this._resetCustomElements();
+        },
+
+        /**
+         * Register custom elements and the initial value
+         */
+        _registerElement: function (event) {
+            var element = event.target;
+            element._parentForm = this;
+            this._customElements.push(element);
+
+            // Save the original value of this input.
+            this._customElementsInitialValues.push(
+              this._usesCheckedInsteadOfValue(element) ? element.checked : element.value
+            );
+        },
+
+        /**
+         * Unregister custom elements
+         */
+        _unregisterElement: function (event) {
+            var target = event.detail.target;
+            if (target) {
+                var index = this._customElements.indexOf(target);
+                if (index > -1) {
+                    this._customElements.splice(index, 1);
+                    this._customElementsInitialValues.splice(index, 1);
+                }
+            }
+        },
+
+        /**
+         * Validates all the required elements (custom and native) in the form.
+         * @return {boolean} True if all the elements are valid.
+         */
+        validate: function() {
+            var valid = true;
+
+            // Validate all the custom elements.
+            var validatable;
+            for (var el, i = 0; el = this._customElements[i], i < this._customElements.length; i++) {
+                if (el.required && !el.disabled) {
+                    validatable = /** @type {{validate: (function() : boolean)}} */ (el);
+                    // Some elements may not have correctly defined a validate method.
+                    if (validatable.validate)
+                        valid = !!validatable.validate() && valid;
+                }
+            }
+
+            // Validate the form's native elements.
+            for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
+                // Custom elements that extend a native element will also appear in
+                // this list, but they've already been validated.
+                if (!el.hasAttribute('is') && el.willValidate && el.checkValidity && el.name) {
+                    valid = el.checkValidity() && valid;
+                }
+            }
+
+            return valid;
+        },
+
+        /**
+         * Populate value
+         */
+        _populateValues: function (data) {
+            if (!data || !this._customElements) {
+                return;
+            }
+
+            var inflatedData = this.inflateKeys(data);
+            var el;
+            var value;
+
+            // Go through all of the registered custom components.
+            for (var i = 0; el = this._customElements[i], i < this._customElements.length; i++) {
+                value = data[el.name] || inflatedData[el.name];
+                if (value) {
+                    el[el.getPropertyInfo('bindValue').defined ? 'bindValue' : 'value'] = value;
+                    el.invalid = false;
+                }
+            }
+
+            // Go through other elements.
+
+            for (var name in data) {
+                el = this.elements.namedItem(name);
+                if (el) {
+                    el.value = data[name];
+                }
+            }
+
+            for (name in inflatedData) {
+                el = this.elements.namedItem(name);
+                if (el) {
+                    el.value = inflatedData[name];
+                }
+            }
+        },
+
+        /**
+         * Populate inputs error massage
+         */
+        setErrorMessages: function (messages) {
+
+            messages = this.inflateKeys(messages, true);
+
+            // Go through all of the registered custom components.
+            mainloop:
+            for (var el, i = 0; el = this._customElements[i], i < this._customElements.length; i++) {
+                if (messages[el.name]) {
+                    var errors = messages[el.name];
+
+                    if (typeof errors != 'string' && !Array.isArray(errors)) {
+                        var ret = [];
+                        for (var k in errors) {
+                            ret.push(errors[k]);
+                        }
+                        errors = ret;
+                    }
+
+                    errors = Array(errors).join(', ');
+
+                    while (!el.getPropertyInfo || !el.getPropertyInfo('errorMessage').defined) {
+                        if (el.parentElement === this) {
+                            continue mainloop;
+                        }
+                        el = el.parentElement;
+                    }
+
+                    el.errorMessage = errors;
+                    el.invalid = true;
+                } else {
+                    el.errorMessage = '';
+                    el.invalid = false;
+                }
+            }
+        },
+
+        serialize: function () {
+            var json = {};
+            var el, i;
+
+            // Go through all of the registered custom components.
+            for (i = 0; el = this._customElements[i], i < this._customElements.length; i++) {
+                if (this._useValue(el)) {
+                    this.deflateKeyAndSet(el.name, el.value, json, true);
+                }
+            }
+
+            // Also go through the form's native elements.
+            for (i = 0; el = this.elements[i], i < this.elements.length; i++) {
+                // Checkboxes and radio buttons should only use their value if they're checked.
+                // Also, custom elements that extend native elements (like an
+                // `<input is="fancy-input">`) will appear in both lists. Since they
+                // were already added as a custom element, they don't need
+                // to be re-added.
+                if (!this._useValue(el) ||
+                        (el.hasAttribute('is') && json[el.name])) {
+                    continue;
+                }
+                this.deflateKeyAndSet(el.name, el.value, json, true);
+            }
+
+            return json;
+        },
+
+        /**
+         * Resets all non-disabled form custom elements to their initial values.
+         */
+        _resetCustomElements: function() {
+            // Reset all the registered custom components. We need to do this after
+            // the native reset, since programmatically changing the `value` of some
+            // native elements (iron-input in particular) does not notify its
+            // parent `paper-input`, which will now display the wrong value.
+            this.async(function() {
+                for (var el, i = 0; el = this._customElements[i], i < this._customElements.length; i++) {
+                    if (el.disabled)
+                        continue;
+
+                    if (this._usesCheckedInsteadOfValue(el)) {
+                        el.checked = this._customElementsInitialValues[i];
+                    } else {
+                        el.value = this._customElementsInitialValues[i];
+                    }
+                }
+
+                this.fire('apigility-form-reset');
+            }, 1);
+        },
+
+        /**
+         * Returns whether the given element is a radio-button or a checkbox.
+         * @return {boolean} True if the element has a `checked` property.
+         */
+        _usesCheckedInsteadOfValue: function (el) {
+            if (el.type == 'checkbox' ||
+                    el.type == 'radio' ||
+                    el.getAttribute('role') == 'checkbox' ||
+                    el.getAttribute('role') == 'radio' ||
+                    el._hasIronCheckedElementBehavior) {
+                return true;
+            }
+            return false;
+        },
+
+        _useValue: function (el) {
+            // Skip disabled elements or elements that don't have a `name` attribute.
+            if (el.disabled || !el.name) {
+                return false;
+            }
+
+            // Checkboxes and radio buttons should only use their value if they're
+            // checked. Custom paper-checkbox and paper-radio-button elements
+            // don't have a type, but they have the correct role set.
+            if (this._usesCheckedInsteadOfValue(el))
+                return el.checked;
+            return true;
+        },
+
+        _doFakeSubmitForValidation: function() {
+            var fakeSubmit = document.createElement('input');
+            fakeSubmit.setAttribute('type', 'submit');
+            fakeSubmit.style.display = 'none';
+            this.appendChild(fakeSubmit);
+
+            fakeSubmit.click();
+
+            this.removeChild(fakeSubmit);
+        }
+    };
+
+    PolymerApigility.FormBehaviorImpl = [
+        PolymerApigility.UtilsBehaviorImpl,
+        PolymerApigility.FormBehavior
+    ];
+</script>
