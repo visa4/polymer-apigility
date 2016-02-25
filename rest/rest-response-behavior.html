@@ -23,8 +23,8 @@
     },
 
     ready: function () {
-      this.ironAjax.addEventListener('response', this.responseHandler.bind(this));
-      this.ironAjax.addEventListener('error', this.responseErrorHandler.bind(this));
+      this.$.ironAjax.addEventListener('response', this.responseHandler.bind(this));
+      this.$.ironAjax.addEventListener('error', this.responseErrorHandler.bind(this));
     },
 
     /**
@@ -42,7 +42,7 @@
         this._setEntity(e.detail.response);
       }
 
-      switch (this.ironAjax.method.toUpperCase()) {
+      switch (this.$.ironAjax.method.toUpperCase()) {
         case 'POST':
           this.fire('rest-iron-ajax-post-response', {restIronAjax: this, isEntityRequest: isEntityRequest});
           break;

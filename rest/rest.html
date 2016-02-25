@@ -6,12 +6,21 @@
 <link rel="import" href="rest-paginable-behavior.html">
 
 <dom-module id="apigility-rest">
-
+  <template>
+    <iron-ajax id="ironAjax" content-type="{{contentType}}"></iron-ajax>
+  </template>
   <script>
     'use strict';
 
     Polymer({
       is: 'apigility-rest',
+
+      properties: {
+
+        contentType: {
+          type: String
+        }
+      },
 
       behaviors: [
         PolymerApigility.ApiConfigBehaviorImp,

@@ -11,7 +11,8 @@
                 identify="{{identify}}"
                 sub-service-name="{{subServiceName}}"
                 sub-identify="{{subIdentify}}}"
-                entity="[[entity]]">
+                entity="[[entity]]"
+                content-type="{{contentType}}">
         </apigility-rest>
         <content></content>
     </template>
@@ -70,6 +71,11 @@
 
                 genericError: {
                     type: String
+                },
+
+                contentType: {
+                    type: String,
+                    value: "application/json"
                 }
             },
 
@@ -144,6 +150,7 @@
              */
             submit: function () {
 
+                var restoreMultiPartFormDataContentType = false;
                 if (!this.noValidate && !this.validate()) {
                     // In order to trigger the native browser invalid-form UI, we need to do perform a fake form submit.
                     if (!this.disableNativeValidationUi) {
@@ -153,7 +160,15 @@
                     return;
                 }
 
-                var data = this.serialize();
+                switch (this.contentType) {
+                    case 'multipart/form-data':
+                        data = this.getFormData();
+                        this.contentType = null;
+                        restoreMultiPartFormDataContentType = true;
+                        break;
+                    default:
+                        var data = this.serialize();
+                }
 
                 if (this.identify) {
                     switch (this.updateMethod.toUpperCase()) {
@@ -170,6 +185,9 @@
                     this.client.post(data);
                 }
 
+                if (restoreMultiPartFormDataContentType) {
+                    this.contentType = 'multipart/form-data';
+                }
                 this.fire('str-rest-form-valid');
             }
         });

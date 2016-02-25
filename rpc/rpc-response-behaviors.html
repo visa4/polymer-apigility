@@ -5,8 +5,8 @@
   PolymerApigility.RpcResponseBehaviorImp = {
 
     ready: function () {
-      this.ironAjax.addEventListener('response', this.responseHandler.bind(this));
-      this.ironAjax.addEventListener('error', this.responseErrorHandler.bind(this));
+      this.$.ironAjax.addEventListener('response', this.responseHandler.bind(this));
+      this.$.ironAjax.addEventListener('error', this.responseErrorHandler.bind(this));
     },
 
     /**

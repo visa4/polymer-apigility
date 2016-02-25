@@ -6,7 +6,9 @@
 <link rel="import" href="rpc-response-behaviors.html">
 
 <dom-module id="apigility-rpc">
-
+  <template>
+    <iron-ajax id="ironAjax" content-type="{{contentType}}"></iron-ajax>
+  </template>
   <script>
     'use strict';
 
@@ -34,6 +36,10 @@
             value: function() {
               return {};
             }
+          },
+
+          contentType: {
+            type: String
           }
         },
 

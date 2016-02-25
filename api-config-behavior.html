@@ -4,6 +4,7 @@
 
     PolymerApigility.ApiConfigBehaviorImp = {
         properties: {
+
             /**
              * Service root url
              */
@@ -11,19 +12,18 @@
                 type: String
             }
         },
-
         ready: function () {
 
-            this.ironAjax = (document.createElement('iron-ajax'));
+            // TODO check this.$.ironAjax exist
 
             var rootUrl = new Polymer.IronMetaQuery({type:'apigility', key: 'root-url'}).value;
-            if (!this.rootUrl) {
+            if (!this.rootUrl && rootUrl) {
                 this.rootUrl = rootUrl;
             }
 
             var contentType = new Polymer.IronMetaQuery({type:'apigility', key: 'content-type'}).value;
-            if (contentType) {
-                this.ironAjax.contentType = contentType;
+            if (!this.contentType && contentType) {
+                this.$.ironAjax.contentType = contentType;
             }
 
             var headers = new Polymer.IronMetaQuery({type:'apigility', key: 'headers'}).value;
@@ -35,7 +35,7 @@
             }
 
             if (headers) {
-                this.ironAjax.headers = headers;
+                this.$.ironAjax.headers = headers;
             }
         }
     };
