@@ -64,8 +64,7 @@
             },
 
             behaviors: [
-                Strapieno.UtilsBehaviorImpl,
-                Strapieno.FormBehaviorImpl
+                PolymerApigility.FormBehaviorImpl
             ],
 
             ready: function() {
@@ -95,18 +94,17 @@
              */
             _errorResponseListener: function (event) {
 
+                this.fire('apigility-rpc-form-invalid-remote', {'ironRequest': event.detail.ironRequest});
                 var bodyResponse = event.detail.ironRequest.xhr.response;
                 switch (event.detail.ironRequest.status) {
                     case 422:
                         if (bodyResponse.validation_messages) {
                             this.setErrorMessages(bodyResponse.validation_messages);
                         } else {
-                            // TODO is correct?
                             this._setGenericError(event.detail.ironRequest.xhr.response.title);
                         }
                         break;
                     default :
-                        // TODO is correct?
                         this._setGenericError(event.detail.ironRequest.xhr.response.title);
                 }
             },
@@ -123,7 +121,7 @@
                     if (!this.disableNativeValidationUi) {
                         this._doFakeSubmitForValidation();
                     }
-                    this.fire('apigility-rpc-form-invalid');
+                    this.fire('apigility-rpc-form-invalid-local',  {'ironRequest': this.$.rpcClient.$.ironAjax});
                     return;
                 }
 
@@ -137,8 +135,11 @@
                     default:
                         data = this.serialize();
                 }
-                this.client.createRequest(this.method, data);
-                this.fire('apigility-rpc-form-valid');
+
+                var event = this.fire('apigility-rpc-form-presubmit', {'form': this}, {cancelable: true});
+                if(!event.defaultPrevented) {
+                    this.client.createRequest(this.method, data);
+                }
             }
         });
     </script>

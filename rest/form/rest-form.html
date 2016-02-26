@@ -121,7 +121,8 @@
              * Set identifier
              */
             _postResponseListener: function (event) {
-                this.identify = event.detail.restClient.entity.id;
+                this.identify = event.detail.restIronAjax.entity.id;
+                this.fire('apigility-rest-form-response', {'restIronAjax': event.detail.restIronAjax});
             },
 
             /**
@@ -129,18 +130,17 @@
              */
             _errorResponseListener: function (event) {
 
+                this.fire('apigility-rest-form-invalid-remote', {'ironRequest': event.detail.ironRequest});
                 var bodyResponse = event.detail.ironRequest.xhr.response;
                 switch (event.detail.ironRequest.status) {
                     case 422:
                         if (bodyResponse.validation_messages) {
                             this.setErrorMessages(bodyResponse.validation_messages);
                         } else {
-                            // TODO is correct?
                             this._setGenericError(event.detail.ironRequest.xhr.response.title);
                         }
                         break;
                     default :
-                        // TODO is correct?
                         this._setGenericError(event.detail.ironRequest.xhr.response.title);
                 }
             },
@@ -157,7 +157,7 @@
                     if (!this.disableNativeValidationUi) {
                         this._doFakeSubmitForValidation();
                     }
-                    this.fire('str-rest-form-invalid');
+                    this.fire('apigility-rest-form-invalid-local',  {'ironRequest': this.$.restClient.$.ironAjax});
                     return;
                 }
 
@@ -169,6 +169,11 @@
                         break;
                     default:
                         var data = this.serialize();
+                }
+
+                var event = this.fire('apigility-rest-form-presubmit', {'form': this}, {cancelable: true});
+                if(event.defaultPrevented) {
+                   return;
                 }
 
                 if (this.identify) {
@@ -189,7 +194,6 @@
                 if (restoreMultiPartFormDataContentType) {
                     this.contentType = 'multipart/form-data';
                 }
-                this.fire('str-rest-form-valid');
             }
         });
     </script>
