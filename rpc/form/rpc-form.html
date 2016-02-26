@@ -1,25 +1,24 @@
-<link rel="import" href="../rest.html">
+<link rel="import" href="../rpc.html">
 <link rel="import" href="../../form/form-behavior.html">
 
-<dom-module id="apigility-rest-form">
+<dom-module id="apigility-rpc-form">
     <template>
-        <apigility-rest
-                id="restClient"
+        <apigility-rpc
+                id="rpcClient"
+                method="{{method}}"
                 app-id="{{appId}}"
                 root-url="{{rootUrl}}"
                 service-name="{{serviceName}}"
                 identify="{{identify}}"
-                sub-service-name="{{subServiceName}}"
-                sub-identify="{{subIdentify}}}"
                 content-type="{{contentType}}">
-        </apigility-rest>
+        </apigility-rpc>
         <content></content>
     </template>
     <script>
         'use strict';
 
         Polymer({
-            is: 'apigility-rest-form',
+            is: 'apigility-rpc-form',
             extends: 'form',
 
             properties: {
@@ -34,14 +33,6 @@
                 disableNativeValidationUi: {
                     type: Boolean,
                     value: false
-                },
-
-                /**
-                 * Method to use when the entity is already load
-                 */
-                updateMethod: {
-                    type: String,
-                    value: 'PUT'
                 },
 
                 appId: {
@@ -60,41 +51,32 @@
                     type: String
                 },
 
-                subServiceName: {
-                    type: String
-                },
-
-                subIdentify: {
-                    type: String
-                },
-
                 genericError: {
                     type: String,
                     readOnly: true,
                     notify: true
                 },
 
-                contentType: {
+                method : {
                     type: String,
-                    value: "application/json"
+                    value: 'POST'
                 }
             },
 
             behaviors: [
-                PolymerApigility.FormBehaviorImpl
+                Strapieno.UtilsBehaviorImpl,
+                Strapieno.FormBehaviorImpl
             ],
 
             ready: function() {
-                this.client = this.$.restClient;
+                this.client = this.$.rpcClient;
             },
 
             /**
              */
             listeners: {
                 'submit': '_onSubmit',
-                'rest-iron-ajax-get-response': '_getResponseListener',
-                'rest-iron-ajax-post-response': '_postResponseListener',
-                'rest-iron-ajax-error-response': '_errorResponseListener'
+                'rpc-iron-ajax-error-response': '_errorResponseListener'
             },
 
             _onSubmit: function (event) {
@@ -106,22 +88,6 @@
                 }
 
                 return false;
-            },
-
-            /**
-             * Populate value when rest-iron-ajax trigger a GET request
-             */
-            _getResponseListener: function (event) {
-                if (eventdetail.isEntityRequest) {
-                    this._populateValues(event.detail.restClient.entity);
-                }
-            },
-
-            /**
-             * Set identifier
-             */
-            _postResponseListener: function (event) {
-                this.identify = event.detail.restClient.entity.id;
             },
 
             /**
@@ -157,10 +123,11 @@
                     if (!this.disableNativeValidationUi) {
                         this._doFakeSubmitForValidation();
                     }
-                    this.fire('str-rest-form-invalid');
+                    this.fire('apigility-rpc-form-invalid');
                     return;
                 }
 
+                var data;
                 switch (this.contentType) {
                     case 'multipart/form-data':
                         data = this.getFormData();
@@ -168,28 +135,10 @@
                         restoreMultiPartFormDataContentType = true;
                         break;
                     default:
-                        var data = this.serialize();
+                        data = this.serialize();
                 }
-
-                if (this.identify) {
-                    switch (this.updateMethod.toUpperCase()) {
-                        case 'PUT':
-                            this.client.put(this.identify, data);
-                            break;
-                        case 'PATCH':
-                            this.client.patch(this.identify, data);
-                            break;
-                        default:
-                            throw "Invalid method " + this.updateMethod.toUpperCase();
-                    }
-                } else {
-                    this.client.post(data);
-                }
-
-                if (restoreMultiPartFormDataContentType) {
-                    this.contentType = 'multipart/form-data';
-                }
-                this.fire('str-rest-form-valid');
+                this.client.createRequest(this.method, data);
+                this.fire('apigility-rpc-form-valid');
             }
         });
     </script>
