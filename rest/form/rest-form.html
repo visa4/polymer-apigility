@@ -112,8 +112,8 @@
              * Populate value when rest-iron-ajax trigger a GET request
              */
             _getResponseListener: function (event) {
-                if (eventdetail.isEntityRequest) {
-                    this._populateValues(event.detail.restClient.entity);
+                if (event.detail.isEntityRequest) {
+                    this._populateValues(event.detail.restIronAjax.entity);
                 }
             },
 
