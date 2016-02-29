@@ -18,22 +18,28 @@
          *
          * @return {Object}
          */
-        get requestHeaders() {
-            var headers = {};
+        requestHeaders: function(headers) {
+            var mergedHeaders = {};
 
             if (this.$.ironAjax.headers !== null && this.$.ironAjax.headers instanceof Object) {
                 for (var header in this.$.ironAjax.headers) {
-                    headers[header] = this.$.ironAjax.headers[header].toString();
+                    mergedHeaders[header] = this.$.ironAjax.headers[header].toString();
                 }
             }
 
             if (this.headers !== null && this.headers instanceof Object) {
                 for (var header in this.headers) {
-                    headers[header] = this.headers[header].toString();
+                    mergedHeaders[header] = this.headers[header].toString();
                 }
             }
 
-            return headers;
+            if (headers !== null && headers instanceof Object) {
+                for (var header in headers) {
+                    mergedHeaders[header] = headers[header].toString();
+                }
+            }
+
+            return mergedHeaders;
         },
 
         /**
@@ -49,7 +55,7 @@
             this.$.ironAjax.url = this.buildUrl();
             this.$.ironAjax.method = (method) ? method : this.method;
             this.$.ironAjax.body = (data) ? data : null;
-            this.$.ironAjax.headers = this.requestHeaders;
+            this.$.ironAjax.headers = this.requestHeaders(headers);
             this.$.ironAjax.params = (query) ? query : {};
             this.$.ironAjax.generateRequest();
         },
