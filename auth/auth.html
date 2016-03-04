@@ -1,10 +1,12 @@
-<link rel="import" href="../rpc/rpc.html">
+<link rel="import" href="../api-client.html">
 <link rel="import" href="../api-config-behavior.html">
-<link rel="import" href="../api-create-request.html">
+<link rel="import" href="../api-create-request-behavior.html">
+
 <dom-module id="apigility-auth">
     <template>
-        <apigility-rpc id="auth" service-name="{{oauthService}}" content-type="{{contentType}}"></apigility-rpc>
-        <apigility-rpc id="identityObject" service-name="{{identityObjectService}}" content-type="{{contentType}}"></apigility-rpc>
+        <apigility-client debounce-duration="500" id="auth" service-name="{{oauthService}}" content-type="{{contentType}}"></apigility-client>
+        <apigility-client id="identityObject" service-name="{{identityObjectService}}"
+                          content-type="{{contentType}}"></apigility-client>
     </template>
     <script>
         'use strict';
@@ -33,7 +35,8 @@
 
                 auth: {
                     type: Object,
-                    value: function() {
+                    notify: true,
+                    value: function () {
                         return {};
                     }
                 },
@@ -46,68 +49,86 @@
                     type: Object,
                     readOnly: true,
                     notify: true,
-                    value: function() {
+                    value: function () {
                         return {};
                     }
                 }
             },
 
             ready: function () {
-                this.$.auth.addEventListener('rpc-iron-ajax-response', this._responseAuthListener.bind(this));
-                this.$.identityObject.addEventListener('rpc-iron-ajax-response', this._responseIdentityObjectListener.bind(this));
-                this.loadAuthFromStorage();
+                this.$.auth.addEventListener('api-iron-ajax-response', this._responseAuthListener.bind(this));
+                this.$.auth.addEventListener('api-iron-ajax-error-response', this._responseAuthErrorListener.bind(this));
+                this.$.identityObject.addEventListener('api-iron-ajax-response', this._responseIdentityObjectListener.bind(this));
+                this.$.identityObject.addEventListener('api-iron-ajax-error-response', this._responseAuthErrorListener.bind(this));
+
+                this.addEventListener('api-iron-ajax-error-response', this._responseAuthErrorListener.bind(this));
+                this.preload();
+                document.addEventListener('refresh-auth', this.refresh.bind(this));
+
             },
 
-            _responseAuthListener: function(event) {
+            _responseIdentityObjectListener: function (event) {
+                this._setIdentityObject(event.detail.apiClient.$.ironAjax.lastRequest.xhr.response);
+            },
 
-                if (event.detail.ironRequest.xhr.response.refresh_token) {
-                    this.auth = event.detail.ironRequest.xhr.response;
-                    this.$.identityObject.createRequest('GET');
-                } else {
-                    var auth = event.detail.ironRequest.xhr.response;
-                    auth['refresh_token'] = this.auth.refresh_token;
-                    this.auth = auth;
+            _responseAuthListener: function (event) {
+
+                this.auth = event.detail.apiClient.$.ironAjax.lastRequest.xhr.response;
+                var bodyRequest = event.detail.apiClient.$.ironAjax.body;
+                if (bodyRequest && bodyRequest.grant_type && !(bodyRequest.grant_type === 'refresh_token')) {
+                    this.loadIdentityObject(this.auth.access_token);
                 }
+
+                var event = new CustomEvent(
+                        "refresh-auth-complete",
+                        {detail: {element: this}, bubbles: true, cancelable: true}
+                );
+                document.dispatchEvent(event);
                 localStorage.setItem('auth', JSON.stringify(this.auth));
             },
 
-            _responseIdentityObjectListener: function(event) {
-                this._setIdentityObject(event.detail.ironRequest.response);
+            _responseAuthErrorListener: function (event) {
+                this.clear();
             },
 
-            loadAuthFromStorage : function () {
+            preload: function () {
                 var auth = localStorage.getItem('auth');
                 if (!auth) {
                     return;
                 }
                 this.auth = JSON.parse(auth);
+                this.loadIdentityObject(this.auth.access_token);
             },
 
-            login: function(data) {
+            loadIdentityObject: function (accessToken) {
+                this.$.identityObject.createRequest('GET', {}, {'Authorization': 'Bearer ' + accessToken});
+            },
+
+            login: function (data) {
 
                 data['grant_type'] = this.grantType;
                 data['client_id'] = this.clientId;
                 this.$.auth.createRequest('POST', data);
             },
 
-            refresh: function() {
-                var data =   {
-                    'grant_type' : 'refresh_token',
-                    'client_id' : this.clientId,
-                    'refresh_token' : this.auth.refresh_token
+            refresh: function () {
+                var data = {
+                    'grant_type': 'refresh_token',
+                    'client_id': this.clientId,
+                    'refresh_token': this.auth.refresh_token
                 };
 
                 this.$.auth.createRequest('POST', data);
             },
 
-            logout: function() {
+            logout: function () {
                 this.auth = null;
                 localStorage.removeItem('auth');
             },
 
-            clear: function() {
+            clear: function () {
                 this.auth = null;
-                localStorage.getItem('auth');
+                localStorage.removeItem('auth');
                 this._setIdentityObject(null);
             }
         });

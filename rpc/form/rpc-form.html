@@ -94,18 +94,19 @@
              */
             _errorResponseListener: function (event) {
 
-                this.fire('apigility-rpc-form-invalid-remote', {'ironRequest': event.detail.ironRequest});
-                var bodyResponse = event.detail.ironRequest.xhr.response;
-                switch (event.detail.ironRequest.status) {
+                // FIXME review
+                //this.fire('apigility-rpc-form-invalid-remote', {'ironRequest': event.detail.ironRequest});
+                var bodyResponse = event.detail.rpcClient.$.ironAjax.lastRequest.xhr.response;
+                switch (event.detail.rpcClient.$.lastRequest.status) {
                     case 422:
                         if (bodyResponse.validation_messages) {
                             this.setErrorMessages(bodyResponse.validation_messages);
                         } else {
-                            this._setGenericError(event.detail.ironRequest.xhr.response.title);
+                            this._setGenericError(event.detail.rpcClient.$.lastRequest.xhr.response.title);
                         }
                         break;
                     default :
-                        this._setGenericError(event.detail.ironRequest.xhr.response.title);
+                        this._setGenericError(event.detail.rpcClient.$.lastRequest.xhr.response.title);
                 }
             },
 

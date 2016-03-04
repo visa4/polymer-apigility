@@ -57,7 +57,11 @@
             this.$.ironAjax.body = (data) ? data : null;
             this.$.ironAjax.headers = this.requestHeaders(headers);
             this.$.ironAjax.params = (query) ? query : {};
-            this.$.ironAjax.generateRequest();
+            var event = this.fire('api-request-presend',  this.$.ironAjax, {}, {cancelable: true});
+            if(!event.defaultPrevented) {
+                event.detail.generateRequest();
+            }
+
         },
 
         buildUrl: function() {

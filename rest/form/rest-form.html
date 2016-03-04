@@ -113,7 +113,7 @@
              */
             _getResponseListener: function (event) {
                 if (event.detail.isEntityRequest) {
-                    this._populateValues(event.detail.restIronAjax.entity);
+                    this._populateValues(event.detail.restClient.entity);
                 }
             },
 
@@ -121,8 +121,8 @@
              * Set identifier
              */
             _postResponseListener: function (event) {
-                this.identify = event.detail.restIronAjax.entity.id;
-                this.fire('apigility-rest-form-response', {'restIronAjax': event.detail.restIronAjax});
+                this.identify = event.detail.restClient.entity.id;
+                this.fire('apigility-rest-form-response', {'restClient': event.detail.restIronAjax});
             },
 
             /**

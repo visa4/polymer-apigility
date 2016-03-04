@@ -1,6 +1,7 @@
 <link rel="import" href="../../iron-ajax/iron-ajax.html">
 <link rel="import" href="../api-config-behavior.html">
-<link rel="import" href="../api-create-request.html">
+<link rel="import" href="../api-create-request-behavior.html">
+<link rel="import" href="../auth/auth-error-handler-aware-behavior.html">
 <link rel="import" href="rest-url-behavior.html">
 <link rel="import" href="rest-response-behavior.html">
 <link rel="import" href="rest-paginable-behavior.html">
@@ -25,6 +26,7 @@
       behaviors: [
         PolymerApigility.ApiConfigBehaviorImp,
         PolymerApigility.ApiCreateRequestBehaviorImp,
+        PolymerApigility.AuthErrorHandlerAwareBehaviorImp,
         PolymerApigility.RestUrlBehaviorImp,
         PolymerApigility.RestResponseBehaviorImp,
         PolymerApigility.RestPaginableBehaviorImp

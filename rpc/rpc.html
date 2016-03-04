@@ -1,9 +1,9 @@
-
 <link rel="import" href="../../iron-ajax/iron-ajax.html">
 <link rel="import" href="../api-config-behavior.html">
-<link rel="import" href="../api-create-request.html">
+<link rel="import" href="../api-create-request-behavior.html">
+<link rel="import" href="../auth/auth-error-handler-aware-behavior.html">
 <link rel="import" href="rpc-url-behavior.html">
-<link rel="import" href="rpc-response-behaviors.html">
+<link rel="import" href="rpc-response-behavior.html">
 
 <dom-module id="apigility-rpc">
   <template>
@@ -46,6 +46,7 @@
       behaviors: [
         PolymerApigility.ApiConfigBehaviorImp,
         PolymerApigility.ApiCreateRequestBehaviorImp,
+        PolymerApigility.AuthErrorHandlerAwareBehaviorImp,
         PolymerApigility.RpcUrlBehaviorImp,
         PolymerApigility.RpcResponseBehaviorImp
       ]

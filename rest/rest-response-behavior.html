@@ -44,19 +44,19 @@
 
       switch (this.$.ironAjax.method.toUpperCase()) {
         case 'POST':
-          this.fire('rest-iron-ajax-post-response', {restIronAjax: this, isEntityRequest: isEntityRequest});
+          this.fire('rest-iron-ajax-post-response', {restClient: this, isEntityRequest: isEntityRequest});
           break;
         case 'GET':
-          this.fire('rest-iron-ajax-get-response', {restIronAjax: this, isEntityRequest: isEntityRequest});
+          this.fire('rest-iron-ajax-get-response', {restClient: this, isEntityRequest: isEntityRequest});
           break;
         case 'PUT':
-          this.fire('rest-iron-ajax-put-response', {restIronAjax: this, isEntityRequest: isEntityRequest});
+          this.fire('rest-iron-ajax-put-response', {restClient: this, isEntityRequest: isEntityRequest});
           break;
         case 'PATCH':
-          this.fire('rest-iron-ajax-patch-response', {restIronAjax: this, isEntityRequest: isEntityRequest});
+          this.fire('rest-iron-ajax-patch-response', {restClient: this, isEntityRequest: isEntityRequest});
           break;
         case 'DELETE':
-          this.fire('rest-iron-ajax-delete-response', {restIronAjax: this, isEntityRequest: isEntityRequest});
+          this.fire('rest-iron-ajax-delete-response', {restClient: this, isEntityRequest: isEntityRequest});
           break;
       }
     },
