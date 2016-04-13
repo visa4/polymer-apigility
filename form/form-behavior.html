@@ -6,6 +6,20 @@
 
     PolymerApigility.FormBehavior = {
 
+        properties: {
+            /**
+             * By default, the form will display the browser's native validation
+             * UI (i.e. popup bubbles and invalid styles on invalid fields). You can
+             * manually disable this; however, if you do, note that you will have to
+             * manually style invalid *native* HTML fields yourself, as you are
+             * explicitly preventing the native form from doing so.
+             */
+            disableNativeValidationUi: {
+                type: Boolean,
+                value: false
+            }
+        },
+
         listeners: {
             'iron-form-element-register': '_registerElement',
             'iron-form-element-unregister': '_unregisterElement',

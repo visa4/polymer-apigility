@@ -5,6 +5,12 @@
   PolymerApigility.RestResponseBehaviorImp = {
 
     properties: {
+
+      loadCollection: {
+        type: Boolean,
+        value: false,
+      },
+
       collection: {
         type: Array,
         readOnly: true,
@@ -36,7 +42,11 @@
 
       var isEntityRequest = false;
       if (e.detail.response._embedded) {
+        if (!e.detail.response['_embedded'][this.collectionName]) {
+       //   throw "Wrong setting of the collection name attribute";
+        }
         this._setCollection(e.detail.response['_embedded'][this.collectionName]);
+        //this.collection = e.detail.response['_embedded'][this.collectionName];
       } else {
         isEntityRequest = true;
         this._setEntity(e.detail.response);

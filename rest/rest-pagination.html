@@ -1,0 +1,92 @@
+<link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../paper-menu/paper-menu.html">
+<link rel="import" href="../../paper-item/paper-item.html">
+
+<dom-module id="rest-pagination">
+    <template>
+        <div class="horizontal layout end-justified" hidden$="[[_computeHidden(pagination)]]">
+            <paper-icon-button icon="datatable:first-page"></paper-icon-button>
+            <paper-icon-button icon="datatable:prev-page"></paper-icon-button>
+            <paper-dropdown-menu no-label-float style="width: 68px;">
+                <paper-menu class="dropdown-content" selected="{{page}}" attr-for-selected="value">
+                    <template is="dom-repeat" items="{{pageCountOption}}">
+                        <paper-item value="{{item}}">{{item}}</paper-item>
+                    </template>
+                </paper-menu>
+            </paper-dropdown-menu>
+            <paper-icon-button icon="datatable:next-page"></paper-icon-button>
+            <paper-icon-button icon="datatable:last-page"></paper-icon-button>
+            <paper-dropdown-menu no-label-float style="width: 68px;">
+                <paper-menu class="dropdown-content" selected="{{pageSize}}" attr-for-selected="value">
+                    <template is="dom-repeat" items="{{pageSizeOptions}}">
+                        <paper-item value="{{item}}">{{item}}</paper-item>
+                    </template>
+                </paper-menu>
+            </paper-dropdown-menu>
+        </div>
+    </template>
+    <script>
+        'use strict';
+
+        Polymer({
+            is: 'rest-pagination',
+
+            properties: {
+
+                pageCountOption: {
+                    type: Array,
+                    notify: true,
+                    value: [],
+                    computed: '_computeArrayPages(pageCount)'
+                },
+
+                /**
+                 * Possible number of items per page
+                 *
+                 * @attribute pageSizeOptions
+                 * @default [5, 10, 25, 100]
+                 * @type Array
+                 */
+                pageSizeOptions: {
+                    type: Array,
+                    value: [5, 10, 25, 100],
+                    notify: true
+                },
+
+                pageCount: {
+                    type: Number,
+                    value: 0
+                },
+
+                totalItems: {
+                    type: Number
+                },
+
+                page: {
+                    type: Number,
+                    notify: true,
+                    value: 1
+                },
+
+                pageSize: {
+                    type: Number,
+                    notify: true,
+                    value: 10
+                }
+            },
+
+            _computeArrayPages: function (pages) {
+                if (this.pageCountOption.length === this.pageCount) {
+                    return this.pageCountOption;
+                }
+
+                var pageCountOption = [];
+                for (var i = 0; i < this.pageCount; i++) {
+                    pageCountOption[i] = (i + 1);
+                }
+                return pageCountOption;
+            }
+        });
+    </script>
+
+</dom-module>

@@ -1,0 +1,119 @@
+<link rel="import" href="../auth.html">
+<link rel="import" href="../../form/form-behavior.html">
+
+<dom-module id="apigility-auth-form">
+    <template>
+        <content></content>
+    </template>
+    <script>
+        'use strict';
+
+        Polymer({
+            is: 'apigility-auth-form',
+            extends: 'form',
+
+            properties: {
+
+                grantType: {
+                    type: String
+                },
+
+                clientId: {
+                    type: String
+                },
+
+                contentType: {
+                    type: String,
+                    value: "application/json"
+                }
+            },
+
+            behaviors: [
+                PolymerApigility.FormBehaviorImpl
+            ],
+
+            /**
+             */
+            listeners: {
+                'submit': '_onSubmit'
+            },
+
+            attached : function() {
+
+                this.authClient = document.querySelector('apigility-auth');
+                if (!this.authClient) {
+                    this.authClient = (document.createElement('apigility-auth'));
+                    this.authClient.clientId = this.clientId;
+                    this.authClient.grantType = this.grantType;
+                }
+
+                this.authClient.$.auth.addEventListener(
+                        'api-iron-ajax-error-response',
+                        this._responseAuthFormErrorListener.bind(this)
+                );
+            },
+
+            _onSubmit: function (event) {
+                this.submit();
+                this.setErrorMessages([]);
+                // Don't perform a page refresh.
+                if (event) {
+                    event.preventDefault();
+                }
+
+                return false;
+            },
+
+            _responseAuthFormErrorListener: function (event) {
+                if (event.detail.apiClient.$.ironAjax.lastRequest.status === 400) {
+                    var body = event.detail.apiClient.$.ironAjax.body;
+                    var errorMessage = [];
+                    if (body.username === "") {
+                        errorMessage['username'] = ['empty value'];
+                    }
+
+                    if (body.password === "") {
+                        errorMessage['password'] = ['empty value'];
+                    }
+                    this.setErrorMessages(errorMessage);
+                } else {
+                    this.errorMessage = event.detail.apiClient.$.ironAjax.lastRequest.xhr.response.detail;
+                }
+            },
+
+            /**
+             * Called to submit the form.
+             */
+            submit: function () {
+
+                if (!this.noValidate && !this.validate()) {
+                    // In order to trigger the native browser invalid-form UI, we need to do perform a fake form submit.
+                    if (!this.disableNativeValidationUi) {
+                        this._doFakeSubmitForValidation();
+                    }
+
+                    this.fire('apigility-auth-form-invalid-local',  {'ironRequest': this.authClient.$.auth});
+                    return;
+                }
+
+                var data = {};
+                this.authClient.$.auth.contentType = this.contentType;
+                switch (this.contentType) {
+                    case 'multipart/form-data':
+                        data = this.getFormData();
+                        this.authClient.$.auth.contentType = null;
+                        break;
+                    default:
+                        data = this.serialize();
+                }
+
+                var event = this.fire('apigility-auth-form-presubmit', {'form': this}, {cancelable: true});
+                if(event.defaultPrevented) {
+                    return;
+                }
+
+                this.authClient.login(data);
+            }
+        });
+    </script>
+</dom-module>

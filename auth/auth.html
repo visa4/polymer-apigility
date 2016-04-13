@@ -5,8 +5,7 @@
 <dom-module id="apigility-auth">
     <template>
         <apigility-client debounce-duration="500" id="auth" service-name="{{oauthService}}" content-type="{{contentType}}"></apigility-client>
-        <apigility-client id="identityObject" service-name="{{identityObjectService}}"
-                          content-type="{{contentType}}"></apigility-client>
+        <apigility-client id="identityObject" service-name="{{identityObjectService}}" content-type="{{contentType}}"></apigility-client>
     </template>
     <script>
         'use strict';
@@ -36,9 +35,7 @@
                 auth: {
                     type: Object,
                     notify: true,
-                    value: function () {
-                        return {};
-                    }
+                    value: null
                 },
 
                 identityObjectService: {
@@ -49,11 +46,14 @@
                     type: Object,
                     readOnly: true,
                     notify: true,
-                    value: function () {
-                        return {};
-                    }
+                    value: null
                 }
             },
+
+            observers: [
+                'load(users.splices)'
+            ],
+
 
             ready: function () {
                 this.$.auth.addEventListener('api-iron-ajax-response', this._responseAuthListener.bind(this));
@@ -62,9 +62,9 @@
                 this.$.identityObject.addEventListener('api-iron-ajax-error-response', this._responseAuthErrorListener.bind(this));
 
                 this.addEventListener('api-iron-ajax-error-response', this._responseAuthErrorListener.bind(this));
+
                 this.preload();
                 document.addEventListener('refresh-auth', this.refresh.bind(this));
-
             },
 
             _responseIdentityObjectListener: function (event) {

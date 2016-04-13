@@ -33,8 +33,21 @@
       ],
 
       observers: [
-        'get(identify, rootUrl)'
+        'getEntity(identify, rootUrl)',
+        'getCollection(loadCollection, collectionName, rootUrl)'
       ],
+
+      getEntity: function(identify, rootUrl) {
+        if (identify) {
+          this.get();
+        }
+      },
+
+      getCollection:  function(loadCollection, collectionName, rootUrl) {
+        if (loadCollection === true) {
+          this.getAll();
+        }
+      },
 
       get: function() {
         // TODO add query params

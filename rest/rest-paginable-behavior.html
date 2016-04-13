@@ -18,19 +18,21 @@
 
       pageCount: {
         type: Number,
-        readOnly: true
+        readOnly: true,
+        notify: true
       },
 
       totalItems: {
         type: Number,
-        readOnly: true
+        readOnly: true,
+        notify: true
       }
     },
 
 
     observers: [
       'changePage(page)',
-      'changePageSize(size)'
+      'changePageSize(pageSize)'
     ],
 
     ready: function () {
@@ -53,13 +55,14 @@
     },
 
     changePage: function (page) {
-      if (!this.finishLifeCicle) {
-        return;
-      }
-      this. getAll();
+      this.getUsers();
     },
 
     changePageSize: function (pageSize) {
+     this.getUsers();
+    },
+
+    getUsers: function () {
       if (!this.finishLifeCicle) {
         return;
       }
