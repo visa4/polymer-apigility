@@ -34,6 +34,13 @@
             this._customElementsInitialValues = [];
         },
 
+        attached: function () {
+            var button = Polymer.dom(this).querySelector('[submit-button]');
+            if (button) {
+                button.addEventListener('tap', this._onSubmit.bind(this));
+            }
+        },
+
         /**
          * Handler that is called when the native form fires a `reset` event
          *

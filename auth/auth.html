@@ -122,8 +122,8 @@
             },
 
             logout: function () {
-                this.auth = null;
-                localStorage.removeItem('auth');
+                this.fire('logout', {'auth': this.auth});
+                this.clear();
             },
 
             clear: function () {

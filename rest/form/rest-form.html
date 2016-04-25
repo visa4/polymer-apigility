@@ -88,6 +88,8 @@
                 'submit': '_onSubmit',
                 'rest-iron-ajax-get-response': '_getResponseListener',
                 'rest-iron-ajax-post-response': '_postResponseListener',
+                'rest-iron-ajax-put-response': '_putResponseListener',
+                'rest-iron-ajax-patch-response': '_patchResponseListener',
                 'rest-iron-ajax-error-response': '_errorResponseListener'
             },
 
@@ -115,10 +117,18 @@
              * Set identifier
              */
             _postResponseListener: function (event) {
+                this.setErrorMessages([]);
                 this.identify = event.detail.restClient.entity.id;
                 this.fire('apigility-rest-form-response', {'restClient': event.detail.restIronAjax});
             },
 
+            _putResponseListener: function (event) {
+                this.setErrorMessages([]);
+            },
+
+            _patchResponseListener: function (event) {
+                this.setErrorMessages([]);
+            },
             /**
              * Populate error message of the forms element
              */
