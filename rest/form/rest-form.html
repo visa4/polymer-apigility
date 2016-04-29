@@ -114,21 +114,28 @@
             },
 
             /**
-             * Set identifier
+             * Set identifier after post
              */
             _postResponseListener: function (event) {
                 this.setErrorMessages([]);
                 this.identify = event.detail.restClient.entity.id;
-                this.fire('apigility-rest-form-response', {'restClient': event.detail.restIronAjax});
+                this._dispatchResponse(event);
             },
 
             _putResponseListener: function (event) {
                 this.setErrorMessages([]);
+                this._dispatchResponse(event);
             },
 
             _patchResponseListener: function (event) {
                 this.setErrorMessages([]);
+                this._dispatchResponse(event);
             },
+
+            _dispatchResponse: function (event) {
+                this.fire('apigility-rest-form-response', {'restClient': event.detail.restIronAjax});
+            },
+
             /**
              * Populate error message of the forms element
              */
@@ -145,7 +152,7 @@
                         }
                         break;
                     default :
-                        this._setGenericError(event.detail.ironRequest.xhr.response.title);
+                        this._setGenericError(event.detail.ironRequest.xhr.response);
                 }
             },
 

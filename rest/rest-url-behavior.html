@@ -54,10 +54,18 @@
         url = url + '/' + this.subServiceName + '/' + this.subIdentify
       }
       // Attach Service
-      url = url + '/' + this.serviceName;
-      if (this.identify) {
-        url = url + '/' + this.identify;
+      switch(true) {
+        case (this.identify && this.serviceName.indexOf('identify') > 0):
+          url = url + '/' + this.serviceName.replace('identify', this.identify);
+          break;
+        case (this.identify !== undefined && this.identify !== null && this.identify.length > 0):
+          url = url + '/' + this.serviceName + '/' + this.identify;
+          break;
+        default:
+          url = url + '/' + this.serviceName;
+          break;
       }
+
       return url;
     }
   };
