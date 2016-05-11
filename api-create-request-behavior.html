@@ -43,6 +43,30 @@
         },
 
         /**
+         * An object that maps query names to query values
+         *
+         * @return {Object}
+         */
+        requestQuery: function(queries) {
+            var mergedQueries = {};
+
+            if (this.queries !== null && this.queries instanceof Object) {
+                for (var query in this.queries) {
+                    mergedQueries[query] = this.queries[query].toString();
+                }
+            }
+
+            if (queries !== null && queries instanceof Object) {
+                for (var query in queries) {
+                    mergedQueries[query] = queries[query].toString();
+                }
+            }
+
+            return mergedQueries;
+        },
+
+
+        /**
          * Create request
          *
          * @param method string
@@ -56,7 +80,7 @@
             this.$.ironAjax.method = (method) ? method : this.method;
             this.$.ironAjax.body = (data) ? data : null;
             this.$.ironAjax.headers = this.requestHeaders(headers);
-            this.$.ironAjax.params = (query) ? query : {};
+            this.$.ironAjax.params = this.requestQuery(queries);
             var event = this.fire('api-request-presend',  this.$.ironAjax, {}, {cancelable: true});
             if(!event.defaultPrevented) {
                 event.detail.generateRequest();

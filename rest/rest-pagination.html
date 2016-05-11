@@ -14,7 +14,7 @@
 
     </style>
     <template>
-        <div class="horizontal layout end-justified" hidden$="[[_computeHidden(pagination)]]">
+        <div class="horizontal layout end-justified" hidden$="[[_computeHidden(pageCount)]]">
             <template is="dom-if" if="[[_computeFirstPrevPage(page)]]">
                 <paper-icon-button on-tap="_tapFirstPage" icon="datatable:first-page"></paper-icon-button>
             </template>
@@ -91,6 +91,13 @@
                     notify: true,
                     value: 10
                 }
+            },
+
+            _computeHidden: function (pageCount) {
+                if (pageCount > 1) {
+                    return false;
+                }
+                return true;
             },
 
             _computeFirstPrevPage: function (page) {
