@@ -72,9 +72,9 @@
          * @param method string
          * @param data object
          * @param headers object
-         * @param query object
+         * @param queries object
          */
-        createRequest: function (method, data, headers, query) {
+        createRequest: function (method, data, headers, queries) {
             // TODO check this.$.ironAjax exist
             this.$.ironAjax.url = this.buildUrl();
             this.$.ironAjax.method = (method) ? method : this.method;
