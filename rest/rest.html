@@ -20,6 +20,11 @@
 
         contentType: {
           type: String
+        },
+
+        dontLoadEntity: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -38,7 +43,7 @@
       ],
 
       getEntity: function(identify, rootUrl) {
-        if (identify) {
+        if (identify && !this.dontLoadEntity) {
           this.get();
         }
       },

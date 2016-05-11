@@ -12,7 +12,9 @@
                 sub-service-name="{{subServiceName}}"
                 sub-identify="{{subIdentify}}"
                 auth="{{auth}}"
-                content-type="{{contentType}}">
+                content-type="{{contentType}}"
+                entity="{{entity}}"
+                dont-load-entity="{{dontLoadEntity}}">
         </apigility-rest>
         <content></content>
     </template>
@@ -24,6 +26,16 @@
             extends: 'form',
 
             properties: {
+
+                entity: {
+                    type: Object,
+                    notify: true
+                },
+
+                dontLoadEntity: {
+                    type: Boolean,
+                    value: false
+                },
 
                 auth: {
                     type: Object,
