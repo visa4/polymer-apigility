@@ -28,6 +28,7 @@
             this.addEventListener('api-request-presend', this.saveLastRequest.bind(this));
             document.addEventListener('refresh-auth-complete', this.resendLastRequestResponse.bind(this));
         },
+        
 
         saveLastRequest: function(event) {
             var lastRequestParams = {};
