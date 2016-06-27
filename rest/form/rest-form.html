@@ -1,9 +1,9 @@
-<link rel="import" href="../rest.html">
+<link rel="import" href="../rest-api-client.html">
 <link rel="import" href="../../form/form-behavior.html">
 
 <dom-module id="apigility-rest-form">
     <template>
-        <apigility-rest
+        <apigility-rest-api-client
                 id="restClient"
                 app-id="{{appId}}"
                 root-url="{{rootUrl}}"
@@ -15,7 +15,7 @@
                 content-type="{{contentType}}"
                 entity="{{entity}}"
                 dont-load-entity="{{dontLoadEntity}}">
-        </apigility-rest>
+        </apigility-rest-api-client>
         <content></content>
     </template>
     <script>

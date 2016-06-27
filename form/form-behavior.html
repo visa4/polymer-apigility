@@ -4,7 +4,7 @@
 
     window.PolymerApigility = window.PolymerApigility || {};
 
-    PolymerApigility.FormBehavior = {
+    PolymerApigility.FormAwareBehavior = {
 
         properties: {
             /**
@@ -287,8 +287,8 @@
         }
     };
 
-    PolymerApigility.FormBehaviorImpl = [
-        PolymerApigility.UtilsBehaviorImpl,
-        PolymerApigility.FormBehavior
+    PolymerApigility.FormBehavior = [
+        PolymerApigility.UtilsBehavior,
+        PolymerApigility.FormAwareBehavior
     ];
 </script>
