@@ -1,0 +1,70 @@
+<script>
+    window.PolymerApigility = window.PolymerApigility || {};
+
+    PolymerApigility.AuthAwareBehavior = {
+
+        properties: {
+
+            auth: {
+                type: Object
+            },
+
+            reSendLastRequest: {
+                type: Boolean,
+                readOnly: true,
+                value: false
+            },
+
+            lastRequestOptions: {
+                type: Object,
+                readOnly: true,
+                value: null
+            },
+
+            authenticatedRequest: {
+                type: Boolean
+            }
+        },
+
+        ready: function () {
+            this.$.ironAjax.addEventListener('error', this.responseAuthErrorHandlerAware.bind(this));
+            this.$.ironAjax.addEventListener('request', this.saveLastRequestListener.bind(this));
+            this.addEventListener('api-request-presend', this.addAuthListener.bind(this));
+        },
+
+        addAuthListener: function (event) {
+            if (this.auth) {
+                if (this.$.ironAjax.headers !== null && typeof this.$.ironAjax.headers === 'object') {
+                    this.$.ironAjax.headers['Authorization'] =  'Bearer ' + this.auth.access_token;
+                } else {
+                    this.$.ironAjax = {'Authorization': 'Bearer ' + this.auth.access_token};
+
+                }
+            }
+        },
+
+        saveLastRequestListener: function(event) {
+            this._setLastRequestOptions(event.detail.options);
+        },
+
+        responseAuthErrorHandlerAware: function (event) {
+            if (event.detail.request.status === 401 && this.auth) {
+                this._setReSendLastRequest(true);
+                this.fire('iron-signal', {name: 'refresh-auth', data: {auth: this.auth}});
+            }
+        },
+
+        _resendLastRequestListener: function (event) {
+            if (this.reSendLastRequest && this.lastRequestOptions) {
+
+                this.createRequest(
+                    this.lastRequestOptions.method,
+                    this.lastRequestOptions.body,
+                    this.lastRequestOptions.headers,
+                    this.lastRequestOptions.query
+                );
+                this._setReSendLastRequest(false);
+            }
+        }
+    };
+</script>

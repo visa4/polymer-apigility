@@ -1,17 +1,8 @@
 <script>
+
     window.PolymerApigility = window.PolymerApigility || {};
 
-    PolymerApigility.ApiCreateRequestBehaviorImp = {
-
-        properties: {
-
-            headers: {
-                type: Object,
-                value: function() {
-                    return {};
-                }
-            }
-        },
+    PolymerApigility.ApiClientRequestBehavior = {
 
         /**
          * An object that maps header names to header values
@@ -65,6 +56,15 @@
             return mergedQueries;
         },
 
+        requestUrl: function () {
+
+            var url = this.baseUrl;
+            var resource = this.getResource();
+            if (resource) {
+                url += resource.getFullPath();
+            }
+            return url;
+        },
 
         /**
          * Create request
@@ -75,21 +75,25 @@
          * @param queries object
          */
         createRequest: function (method, data, headers, queries) {
-            // TODO check this.$.ironAjax exist
-            this.$.ironAjax.url = this.buildUrl();
-            this.$.ironAjax.method = (method) ? method : this.method;
-            this.$.ironAjax.body = (data) ? data : null;
+
+            this.$.ironAjax.url     = this.requestUrl();
             this.$.ironAjax.headers = this.requestHeaders(headers);
-            this.$.ironAjax.params = this.requestQuery(queries);
+            this.$.ironAjax.params  = this.requestQuery(queries);
+            this.$.ironAjax.method  = (method) ? method : this.method;
+            this.$.ironAjax.body    = (data) ? data : null;
+
             var event = this.fire('api-request-presend',  this.$.ironAjax, {}, {cancelable: true});
+
             if(!event.defaultPrevented) {
                 event.detail.generateRequest();
             }
-
         },
 
-        buildUrl: function() {
-            throw 'Must be override method element implementation';
+        getResource: function () {
+            if (!this.resource) {
+                this.resource = Polymer.dom(this).querySelector('apigility-resource');
+            }
+            return this.resource;
         }
     };
 </script>

@@ -1,0 +1,117 @@
+
+<dom-module id="apigility-resource">
+    <template>
+        <content></content>
+    </template>
+    <script>
+        'use strict';
+
+        Polymer({
+            is: 'apigility-resource',
+
+            properties: {
+
+                resourceName: {
+                    type: String,
+                    value: null
+                },
+
+                hasIdentifier: {
+                    type: Boolean,
+                    value: false
+                },
+
+                identifier: {
+                    type: String,
+                    value: null
+                },
+
+                readyResource: {
+                    type: Boolean,
+                    readOnly: true,
+                    value: false
+                },
+
+                countEvent: {
+                    type: Number,
+                    readOnly: true
+                }
+            },
+
+            observers: [
+                'observePathParams(resourceName, identifier, hasIdentifier)'
+            ],
+
+            listeners: {
+                'change-local-path':'changeLocalPath'
+            },
+
+            changeLocalPath: function (event) {
+                if (this.countEvent === null || this.countEvent === undefined) {
+                    this._setCountEvent(0);
+                }
+                this._setCountEvent(this.countEvent + 1);
+                if (this.countResource() <= this.countEvent) {
+                    this._setReadyResource(true);
+                }
+
+                if (this.parentElement.is !== 'apigility-resource') {
+                    if (this.readyResource) {
+                        if (this.countResource() == this.countEvent) {
+                            this.fire('ready-path');
+                        } else {
+                            this.fire('change-path');
+                        }
+                    }
+                }
+            },
+
+            observePathParams: function (resourceName, identifier, hasIdentifier) {
+                var event = {"resourceName": this.resourceName};
+                if (resourceName && hasIdentifier === false) {
+                    this.fire('change-local-path', event);
+                }
+
+                if (resourceName && identifier && hasIdentifier === true) {
+                    this.fire('change-local-path', event);
+                }
+            },
+
+            _getNestedResource: function () {
+                return Polymer.dom(this).querySelector('apigility-resource');
+            },
+
+            getPath: function () {
+                return "/" + this.resourceName + ((this.identifier) ? "/" + this.identifier : "");
+            },
+
+            getFullPath: function () {
+                var nested = this._getNestedResource();
+                var url = '';
+                if (nested) {
+                    url = url + nested.getFullPath();
+                }
+                return this.getPath() + url;
+            },
+
+            isEntity: function () {
+                var nested = this._getNestedResource();
+                if (nested) {
+                    return nested.isEntity();
+                } else if (this.identifier) {
+                    return true;
+                }
+                return false;
+            },
+
+            countResource: function () {
+                var nested = this._getNestedResource();
+                var count = 0;
+                if (nested) {
+                    count += nested.countResource();
+                }
+                return count += 1;
+            }
+        });
+    </script>
+</dom-module>

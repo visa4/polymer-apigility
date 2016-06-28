@@ -2,25 +2,25 @@
 
     window.PolymerApigility = window.PolymerApigility || {};
 
-    PolymerApigility.ApiConfigBehaviorImp = {
-        properties: {
+    PolymerApigility.ApiClientConfigBehavior = {
 
-            /**
-             * Service root url
-             */
-            rootUrl: {
-                type: String
-            }
-        },
         ready: function () {
 
-            // TODO check this.$.ironAjax exist
-
-            var rootUrl = new Polymer.IronMetaQuery({type:'apigility', key: 'root-url'}).value;
-            if (!this.rootUrl && rootUrl) {
-                this.rootUrl = rootUrl;
+            if (!this.$.ironAjax) {
+                throw "Iron ajax not found";
             }
 
+            /**
+             * Set baseUrl if isn't set on the custom element attributes
+             */
+            var baseUrl = new Polymer.IronMetaQuery({type:'apigility', key: 'base-url'}).value;
+            if (!this.baseUrl && baseUrl) {
+                this.baseUrl = baseUrl;
+            }
+
+            /**
+             * Set contentType if isn't set on the custom element attributes
+             */
             var contentType = new Polymer.IronMetaQuery({type:'apigility', key: 'content-type'}).value;
             if (!this.contentType && contentType) {
                 this.$.ironAjax.contentType = contentType;

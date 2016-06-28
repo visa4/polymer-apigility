@@ -1,0 +1,139 @@
+<link rel="import" href="../api-resource.html">
+<link rel="import" href="auth-api-client.html">
+<link rel="import" href="../../../../bower_components/iron-signals/iron-signals.html">
+
+<dom-module id="apigility-auth-service">
+    <template>
+        <iron-signals on-iron-signal-refresh-auth="_401Listener"></iron-signals>
+        <apigility-client id="oauthClient" content-type="{{contentType}}">
+            <apigility-resource resource-name="{{oauthService}}"></apigility-resource>
+        </apigility-client>
+        <apigility-auth-api-client id="identityClient" content-type="{{contentType}}">
+            <apigility-resource resource-name="{{identityService}}"></apigility-resource>
+        </apigility-auth-api-client>
+    </template>
+    <script>
+        'use strict';
+
+        Polymer({
+            is: 'apigility-auth-service',
+
+            properties: {
+
+                contentType: {
+                    type: String,
+                    value: 'application/json'
+                },
+
+                grantType: {
+                    type: String,
+                    value: 'password'
+                },
+
+                clientId: {
+                    type: String
+                },
+
+                oauthService: {
+                    type: String
+                },
+
+                identityService: {
+                    type: String
+                },
+
+                auth: {
+                    type: Object,
+                    notify: true,
+                    value: null
+                },
+
+                identityObject: {
+                    type: Object,
+                    readOnly: true,
+                    notify: true,
+                    value: null
+                }
+            },
+
+            _401Listener: function (e) {
+                this.refresh();
+            },
+
+            ready: function () {
+                this.$.oauthClient.$.ironAjax.addEventListener('response', this._responseAuthListener.bind(this));
+                this.$.identityClient.$.ironAjax.addEventListener('response', this._responseIdentityObjectListener.bind(this));
+                this.preload();
+            },
+
+            responseAuthErrorHandlerAware: function (event) {
+                if (event.detail.request.status === 401 && this.auth) {
+                    this._setReSendLastRequest(true);
+                    this.fire('iron-signal', {name: 'refresh-auth', data: {auth: this.auth}});
+                }
+            },
+
+            _responseAuthListener: function (event) {
+
+                this.auth = event.detail.response;
+                localStorage.setItem('auth', JSON.stringify(this.auth));
+
+                var bodyRequest = event.detail.ironAjax.body;
+                if (bodyRequest && bodyRequest.grant_type && typeof bodyRequest.grant_type === 'string') {
+                    switch (bodyRequest.grant_type) {
+                        case "refresh_token" :
+                            this.fire('iron-signal', {name: 'refresh-auth-complete', data: {auth: this.auth}});
+                            break;
+                        default :
+                            this.loadIdentityObject(this.auth.access_token);
+                    }
+                }
+            },
+
+            _responseIdentityObjectListener: function (event) {
+                this._setIdentityObject(event.detail.response);
+            },
+
+            preload: function () {
+                var auth = localStorage.getItem('auth');
+                if (!auth) {
+                    return;
+                }
+                this.auth = JSON.parse(auth);
+                this.loadIdentityObject(this.auth.access_token);
+            },
+
+            loadIdentityObject: function (accessToken) {
+                this.$.identityClient.createRequest('GET', {}, {'Authorization': 'Bearer ' + accessToken});
+            },
+
+            login: function (data) {
+
+                data['grant_type'] = this.grantType;
+                data['client_id'] = this.clientId;
+                this.$.oauthClient.createRequest('POST', data);
+            },
+
+            refresh: function () {
+                var data = {
+                    'grant_type': 'refresh_token',
+                    'client_id': this.clientId,
+                    'refresh_token': this.auth.refresh_token
+                };
+
+                this.$.oauthClient.createRequest('POST', data);
+            },
+
+            logout: function () {
+                this.fire('logout', {'auth': this.auth});
+                this.clear();
+            },
+
+            clear: function () {
+                this.auth = null;
+                localStorage.removeItem('auth');
+                this._setIdentityObject(null);
+            }
+        });
+    </script>
+</dom-module>

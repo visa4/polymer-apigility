@@ -1,7 +1,6 @@
-<link rel="import" href="../auth.html">
 <link rel="import" href="../../form/form-behavior.html">
 
-<dom-module id="apigility-auth-form">
+<dom-module id="a-apigility-auth-form">
     <template>
         <content></content>
     </template>
@@ -9,7 +8,7 @@
         'use strict';
 
         Polymer({
-            is: 'apigility-auth-form',
+            is: 'a-apigility-auth-form',
             extends: 'form',
 
             properties: {
@@ -29,28 +28,23 @@
             },
 
             behaviors: [
-                PolymerApigility.FormBehaviorImpl
+                PolymerApigility.FormBehavior
             ],
 
-            /**
-             */
             listeners: {
                 'submit': '_onSubmit'
             },
 
             attached : function() {
 
-                this.authClient = document.querySelector('apigility-auth');
+                this.authClient = document.querySelector('apigility-auth-service');
                 if (!this.authClient) {
-                    this.authClient = (document.createElement('apigility-auth'));
+                    this.authClient = (document.createElement('apigility-auth-service'));
                     this.authClient.clientId = this.clientId;
                     this.authClient.grantType = this.grantType;
                 }
 
-                this.authClient.$.auth.addEventListener(
-                        'api-iron-ajax-error-response',
-                        this._responseAuthFormErrorListener.bind(this)
-                );
+                this.authClient.$.oauthClient.$.ironAjax.addEventListener('error', this._responseAuthFormErrorListener.bind(this));
             },
 
             _onSubmit: function (event) {
@@ -65,8 +59,8 @@
             },
 
             _responseAuthFormErrorListener: function (event) {
-                if (event.detail.apiClient.$.ironAjax.lastRequest.status === 400) {
-                    var body = event.detail.apiClient.$.ironAjax.body;
+                if (event.detail.request.status === 400) {
+                    var body = event.detail.ironAjax.body;
                     var errorMessage = [];
                     if (body.username === "") {
                         errorMessage['username'] = ['empty value'];
@@ -77,7 +71,7 @@
                     }
                     this.setErrorMessages(errorMessage);
                 } else {
-                    this.errorMessage = event.detail.apiClient.$.ironAjax.lastRequest.xhr.response.detail;
+                    this.errorMessage = event.detail.error;
                 }
             },
 
@@ -97,7 +91,7 @@
                 }
 
                 var data = {};
-                this.authClient.$.auth.contentType = this.contentType;
+                this.authClient.contentType = this.contentType;
                 switch (this.contentType) {
                     case 'multipart/form-data':
                         data = this.getFormData();
