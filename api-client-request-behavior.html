@@ -91,7 +91,7 @@
 
         getResource: function () {
             if (!this.resource) {
-                this.resource = Polymer.dom(this).querySelector('apigility-resource');
+                this.resource = this.querySelector('apigility-resource');
             }
             return this.resource;
         }
