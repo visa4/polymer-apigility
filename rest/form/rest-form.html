@@ -10,7 +10,7 @@
                 content-type="{{contentType}}"
                 entity="{{entity}}"
                 dont-load-entity="{{dontLoadEntity}}">
-            <content select=".resource"></content>
+            <content select="apigility-resource"></content>
         </apigility-rest-api-client>
         <content></content>
     </template>
@@ -38,9 +38,6 @@
                     value: null
                 },
 
-                /**
-                 * Method to use when the entity is already load
-                 */
                 updateMethod: {
                     type: String,
                     value: 'PUT'

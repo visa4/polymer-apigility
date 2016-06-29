@@ -8,7 +8,7 @@
         <apigility-client id="oauthClient" content-type="{{contentType}}">
             <apigility-resource resource-name="{{oauthService}}"></apigility-resource>
         </apigility-client>
-        <apigility-auth-api-client id="identityClient" content-type="{{contentType}}">
+        <apigility-auth-api-client id="identityClient" content-type="{{contentType}}" auth="{{auth}}">
             <apigility-resource resource-name="{{identityService}}"></apigility-resource>
         </apigility-auth-api-client>
     </template>
@@ -62,15 +62,9 @@
 
             ready: function () {
                 this.$.oauthClient.$.ironAjax.addEventListener('response', this._responseAuthListener.bind(this));
+                this.$.oauthClient.$.ironAjax.addEventListener('error', this._errorAuthListener.bind(this));
                 this.$.identityClient.$.ironAjax.addEventListener('response', this._responseIdentityObjectListener.bind(this));
-                this.preload();
-            },
-
-            responseAuthErrorHandlerAware: function (event) {
-                if (event.detail.request.status === 401 && this.auth) {
-                    this._setReSendLastRequest(true);
-                    this.fire('iron-signal', {name: 'refresh-auth', data: {auth: this.auth}});
-                }
+                this.preLoad();
             },
 
             _responseAuthListener: function (event) {
@@ -90,11 +84,16 @@
                 }
             },
 
+            _errorAuthListener: function (event) {
+                this.clear();
+            },
+
+
             _responseIdentityObjectListener: function (event) {
                 this._setIdentityObject(event.detail.response);
             },
 
-            preload: function () {
+            preLoad: function () {
                 var auth = localStorage.getItem('auth');
                 if (!auth) {
                     return;

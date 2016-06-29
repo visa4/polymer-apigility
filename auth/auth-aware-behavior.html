@@ -27,7 +27,7 @@
         },
 
         ready: function () {
-            this.$.ironAjax.addEventListener('error', this.responseAuthErrorHandlerAware.bind(this));
+            this.$.ironAjax.addEventListener('error', this.errorAuthAwareListener.bind(this));
             this.$.ironAjax.addEventListener('request', this.saveLastRequestListener.bind(this));
             this.addEventListener('api-request-presend', this.addAuthListener.bind(this));
         },
@@ -43,15 +43,15 @@
             }
         },
 
-        saveLastRequestListener: function(event) {
-            this._setLastRequestOptions(event.detail.options);
-        },
-
-        responseAuthErrorHandlerAware: function (event) {
+        errorAuthAwareListener: function (event) {
             if (event.detail.request.status === 401 && this.auth) {
                 this._setReSendLastRequest(true);
                 this.fire('iron-signal', {name: 'refresh-auth', data: {auth: this.auth}});
             }
+        },
+
+        saveLastRequestListener: function(event) {
+            this._setLastRequestOptions(event.detail.options);
         },
 
         _resendLastRequestListener: function (event) {

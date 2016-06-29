@@ -85,6 +85,12 @@
                 return "/" + this.resourceName + ((this.identifier) ? "/" + this.identifier : "");
             },
 
+
+            /**
+             * Return the string that rapresent the path of url
+             *
+             * @returns {string}
+             */
             getFullPath: function () {
                 var nested = this._getNestedResource();
                 var url = '';
@@ -94,6 +100,11 @@
                 return this.getPath() + url;
             },
 
+            /**
+             * Return true if the element has not nested apigility-resource, it's a leaf
+             *
+             * @returns {boolean}
+             */
             isEntity: function () {
                 var nested = this._getNestedResource();
                 if (nested) {
@@ -104,6 +115,11 @@
                 return false;
             },
 
+            /**
+             * Return the count of the nested apigility-resource
+             *
+             * @returns {number}
+             */
             countResource: function () {
                 var nested = this._getNestedResource();
                 var count = 0;

@@ -93,6 +93,11 @@
             if (!this.resource) {
                 this.resource = this.querySelector('apigility-resource');
             }
+
+            if (!this.resource) {
+                throw 'Resource not config in ' + this.is;
+            }
+
             return this.resource;
         }
     };
