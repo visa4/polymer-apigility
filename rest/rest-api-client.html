@@ -75,8 +75,8 @@
             ],
 
             ready: function () {
-                this.$.ironAjax.addEventListener('response', this.responseHandler.bind(this));
-                this.$.ironAjax.addEventListener('error', this.responseErrorHandler.bind(this));
+                this.$.ironAjax.addEventListener('response', this.responseRestListener.bind(this));
+                this.$.ironAjax.addEventListener('error', this.errorRestListener.bind(this));
             },
 
             _changePath: function (event) {
@@ -108,7 +108,7 @@
              *
              * @param e
              */
-            responseHandler: function (e) {
+            responseRestListener: function (e) {
 
                 var isEntityRequest = false;
                 if (e.detail.response._embedded) {
@@ -145,7 +145,7 @@
              *
              * @param e
              */
-            responseErrorHandler: function (e) {
+            errorRestListener: function (e) {
                 this.fire('rest-iron-ajax-error-response', {'ironRequest': e.detail.request});
             },
 

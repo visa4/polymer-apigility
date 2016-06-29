@@ -40,7 +40,7 @@ fire<script>
         ready: function () {
 
             if (this.$.ironAjax) {
-                this.$.ironAjax.addEventListener('response', this.responseHandler.bind(this));
+                this.$.ironAjax.addEventListener('response', this.responseApiClientListener.bind(this));
                 this.$.ironAjax.addEventListener('error', this.responseErrorHandler.bind(this));
             } else {
                 throw "Iron ajax not found";
@@ -52,9 +52,8 @@ fire<script>
          *
          * @param e
          */
-        responseHandler: function (e) {
-            // FIXME original event?
-            this.fire('api-client-response', {'apiClient': this});
+        responseApiClientListener: function (e) {
+            e.detail.apiClient = this;
         },
 
         /**
@@ -63,8 +62,7 @@ fire<script>
          * @param e
          */
         responseErrorHandler: function (e) {
-            // FIXME original event?
-            this.fire('api-client-error-response', {'apiClient': this});
+            e.detail.apiClient = this;
         }
     };
 </script>
