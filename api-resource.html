@@ -101,6 +101,22 @@
             },
 
             /**
+             * Set the identifier of the leaf apigility-resource element
+             *
+             * @returns {boolean}
+             */
+            setNestedId: function (id) {
+                var nested = this._getNestedResource();
+                if (nested) {
+                    return nested.setNestedId(id);
+                } else {
+                    this.identifier = id;
+                    this.hasIdentifier = true;
+                }
+                return this;
+            },
+
+            /**
              * Return true if the element has not nested apigility-resource, it's a leaf
              *
              * @returns {boolean}

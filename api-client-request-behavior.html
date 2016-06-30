@@ -89,6 +89,14 @@
             }
         },
 
+        setNestedId: function (id) {
+            return this.getResource().setNestedId(id);
+        },
+
+        isEntity: function () {
+            return this.getResource().isEntity();
+        },
+
         getResource: function () {
             if (!this.resource) {
                 this.resource = this.querySelector('apigility-resource');
