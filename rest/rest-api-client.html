@@ -62,7 +62,7 @@
             },
 
             observers: [
-                'readyElement(readyPath, auth)'
+                '_readyElement(readyPath, autoLoad)'
             ],
 
             ready: function () {
@@ -84,15 +84,18 @@
                 this._setReadyPath(true);
             },
 
-            readyElement: function (readyPath, auth) {
-                if (this.autoLoad && readyPath) {
-                    if (this.getResource().isEntity()) {
-                        this.get();
-                    } else {
-                        this.getAll();
-                    }
+            _readyElement: function (readyPath, autoLoad) {
+                if (!autoLoad || !readyPath) {
+                    return;
+                }
+
+                if (this.getResource().isEntity()) {
+                    this.get();
+                } else {
+                    this.getAll();
                 }
             },
+
 
             /**
              * Success response handler
