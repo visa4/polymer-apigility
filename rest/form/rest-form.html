@@ -103,23 +103,23 @@
              * Set identifier after post
              */
             _postResponseListener: function (event) {
-                this.setErrorMessages([]);
+                this.resetErrorMessages();
                 this.identify = event.detail.restClient.entity.id;
                 this._dispatchResponse(event);
             },
 
             _putResponseListener: function (event) {
-                this.setErrorMessages([]);
+                this.resetErrorMessages();
                 this._dispatchResponse(event);
             },
 
             _patchResponseListener: function (event) {
-                this.setErrorMessages([]);
+                this.resetErrorMessages();
                 this._dispatchResponse(event);
             },
 
             _dispatchResponse: function (event) {
-                this.fire('apigility-rest-form-response', {'restClient': event.detail.restIronAjax});
+                this.fire('rest-form-response', {'restClient': event.detail.rest});
             },
 
             /**
@@ -127,18 +127,26 @@
              */
             _errorResponseListener: function (event) {
 
-                this.fire('apigility-rest-form-invalid-remote', {'ironRequest': event.detail.ironRequest});
-                var bodyResponse = event.detail.ironRequest.xhr.response;
-                switch (event.detail.ironRequest.status) {
-                    case 422:
+                this.resetErrorMessages();
+                this.fire('rest-form-invalid-remote', {'ironRequest': event.detail.ironRequest});
+                var bodyResponse = event.detail.request.xhr.response;
+                switch (true) {
+                    case event.detail.request.status == 422:
                         if (bodyResponse.validation_messages) {
                             this.setErrorMessages(bodyResponse.validation_messages);
                         } else {
-                            this._setGenericError(event.detail.ironRequest.xhr.response.title);
+                            this._setGenericError(event.detail.request.xhr.response.title);
+                        }
+                        break;
+                    case event.detail.request.status >= 500:
+                        if (event.detail.request.xhr.response.detail) {
+                            this._setGenericError(event.detail.request.xhr.response.detail);
+                        } else {
+                            this._setGenericError(event.detail.request.xhr.response);
                         }
                         break;
                     default :
-                        this._setGenericError(event.detail.ironRequest.xhr.response);
+                        this._setGenericError(event.detail.request.xhr.response);
                 }
             },
 
@@ -154,7 +162,7 @@
                     if (!this.disableNativeValidationUi) {
                         this._doFakeSubmitForValidation();
                     }
-                    this.fire('apigility-rest-form-invalid-local',  {'ironRequest': this.$.restClient.$.ironAjax});
+                    this.fire('rest-form-invalid-local',  {'ironRequest': this.$.restClient.$.ironAjax});
                     return;
                 }
 
@@ -169,7 +177,7 @@
                         data = this.serialize();
                 }
 
-                var event = this.fire('apigility-rest-form-presubmit', {'form': this}, {cancelable: true});
+                var event = this.fire('rest-form-presubmit', {'form': this}, {cancelable: true});
                 if(event.defaultPrevented) {
                    return;
                 }
