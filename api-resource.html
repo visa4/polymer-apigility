@@ -16,6 +16,11 @@
                     value: null
                 },
 
+                iAmEntity: {
+                    type: Boolean,
+                    value: false
+                },
+
                 hasIdentifier: {
                     type: Boolean,
                     value: false
@@ -123,7 +128,10 @@
              */
             isEntity: function () {
                 var nested = this._getNestedResource();
-                if (nested) {
+
+                if (this.iAmEntity && this.identifier) {
+                    return true;
+                } else if (nested) {
                     return nested.isEntity();
                 } else if (this.identifier) {
                     return true;

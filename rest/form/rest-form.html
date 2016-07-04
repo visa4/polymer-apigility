@@ -72,11 +72,11 @@
              */
             listeners: {
                 'submit': '_onSubmit',
-                'rest-iron-ajax-get-response': '_getResponseListener',
-                'rest-iron-ajax-post-response': '_postResponseListener',
-                'rest-iron-ajax-put-response': '_putResponseListener',
-                'rest-iron-ajax-patch-response': '_patchResponseListener',
-                'rest-iron-ajax-error-response': '_errorResponseListener'
+                'rest-get-response': '_getResponseListener',
+                'rest-post-response': '_postResponseListener',
+                'rest-put-response': '_putResponseListener',
+                'rest-patch-response': '_patchResponseListener',
+                'rest-error': '_errorResponseListener'
             },
 
             _onSubmit: function (event) {
