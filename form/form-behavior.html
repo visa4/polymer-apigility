@@ -17,6 +17,13 @@
             disableNativeValidationUi: {
                 type: Boolean,
                 value: false
+            },
+
+            genericError: {
+                type: String,
+                readOnly: true,
+                notify: true,
+                value: null
             }
         },
 
@@ -147,7 +154,9 @@
         },
 
         resetErrorMessages: function () {
+
             this.setErrorMessages([]);
+            this._setGenericError(null);
         },
 
         /**
