@@ -5,6 +5,7 @@
 <dom-module id="apigility-auth-service">
     <template>
         <iron-signals on-iron-signal-refresh-auth="_401Listener"></iron-signals>
+        <iron-signals on-iron-signal-identity-object="_identityObjectListener"></iron-signals>
         <apigility-client id="oauthClient" content-type="{{contentType}}">
             <apigility-resource resource-name="{{oauthService}}"></apigility-resource>
         </apigility-client>
@@ -56,15 +57,22 @@
                 }
             },
 
-            _401Listener: function (e) {
-                this.refresh();
-            },
-
             ready: function () {
                 this.$.oauthClient.$.ironAjax.addEventListener('response', this._responseAuthListener.bind(this));
                 this.$.oauthClient.$.ironAjax.addEventListener('error', this._errorAuthListener.bind(this));
                 this.$.identityClient.$.ironAjax.addEventListener('response', this._responseIdentityObjectListener.bind(this));
                 this.preLoad();
+            },
+
+            _401Listener: function (event) {
+                this.refresh();
+            },
+
+            _identityObjectListener: function (event) {
+                if (!event.detail.identityObject) {
+                    throw 'Must be retrive identity object';
+                }
+                this._setIdentityObject(event.detail.identityObject);
             },
 
             _responseAuthListener: function (event) {
