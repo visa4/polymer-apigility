@@ -50,6 +50,7 @@
             _onSubmit: function (event) {
                 this.submit();
                 this.resetErrorMessages();
+                this.errorMessage = null;
                 // Don't perform a page refresh.
                 if (event) {
                     event.preventDefault();
