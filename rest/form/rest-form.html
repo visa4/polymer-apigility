@@ -93,6 +93,7 @@
              */
             _postResponseListener: function (event) {
                 this.resetErrorMessages();
+                this.reset();
                 this.identify = event.detail.restClient.entity.id;
                 this._dispatchResponse(event);
             },
