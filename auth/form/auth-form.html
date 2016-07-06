@@ -59,19 +59,24 @@
             },
 
             _responseAuthFormErrorListener: function (event) {
-                if (event.detail.request.status === 400) {
-                    var body = event.detail.ironAjax.body;
-                    var errorMessage = [];
-                    if (body.username === "") {
-                        errorMessage['username'] = ['empty value'];
-                    }
+                switch (true) {
+                    case event.detail.request.status === 400:
+                        var body = event.detail.ironAjax.body;
+                        var errorMessage = [];
+                        if (body.username === "") {
+                            errorMessage['username'] = ['empty value'];
+                        }
 
-                    if (body.password === "") {
-                        errorMessage['password'] = ['empty value'];
-                    }
-                    this.setErrorMessages(errorMessage);
-                } else {
-                    this.errorMessage = event.detail.error;
+                        if (body.password === "") {
+                            errorMessage['password'] = ['empty value'];
+                        }
+                        this.setErrorMessages(errorMessage);
+                        break;
+                    case event.detail.request.status === 401:
+                        this.errorMessage = event.detail.request.xhr.response.detail;
+                        break;
+                    default:
+                        this.errorMessage = event.detail.error;
                 }
             },
 
