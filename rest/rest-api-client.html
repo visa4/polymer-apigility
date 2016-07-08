@@ -105,7 +105,7 @@
             responseRestListener: function (e) {
 
                 var isEntityRequest = false;
-                if (e.detail.response._embedded) {
+                if (e.detail.response && e.detail.response._embedded) {
                     if (!e.detail.response['_embedded'][this.collectionName]) {
                        throw 'CollectionName must be set in ' + this.is;
                     }
