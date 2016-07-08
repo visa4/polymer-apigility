@@ -36,7 +36,7 @@
          * @param e
          */
         paginationListener: function (e) {
-            if (e.detail.response._embedded) {
+            if (e.detail.response && e.detail.response._embedded) {
                 this._setPageCount(e.detail.response.page_count);
                 this._setTotalItems( e.detail.response.total_items);
             }
