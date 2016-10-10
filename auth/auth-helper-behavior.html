@@ -4,14 +4,27 @@
 
   PolymerApigility.AuthHelperBehavior = {
 
-    isAuth: function () {
+      properties: {
 
-      var isAuth = false;
-      for(var key in this.auth){
-        isAuth = true;
+          auth: {
+              type: Object,
+              notify:true,
+              observer: '_authChanged'
+          },
+
+          isAuth: {
+              type: Boolean,
+              notify:true,
+              value: false
+          }
+      },
+
+      _authChanged: function () {
+          this.isAuth = false;
+          for(var key in this.auth){
+              this.isAuth = true;
+              return;
+          }
       }
-
-      return isAuth;
-    }
   };
 </script>
