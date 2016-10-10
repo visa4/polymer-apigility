@@ -134,7 +134,7 @@
             },
 
             logout: function () {
-                this.fire('logout', {'auth': this.auth});
+                this.fire('iron-signal', {name: 'logout', data: {auth: this.auth}});
                 this.clear();
             },
 
