@@ -35,6 +35,12 @@
                 if (auth) {
                     this._setAuth(JSON.parse(auth));
                 }
+
+                var identityObject = localStorage.getItem('identityObject');
+                if (identityObject) {
+                    this._setIdentityObject(JSON.parse(identityObject));
+                }
+
             },
 
             _logout: function (e) {

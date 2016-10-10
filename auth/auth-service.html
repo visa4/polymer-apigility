@@ -99,8 +99,10 @@
             },
 
             _responseIdentityObjectListener: function (event) {
-                this.fire('iron-signal', {name: 'load-identity-object', data: {identityObject: event.detail.response}});
+
                 this._setIdentityObject(event.detail.response);
+                localStorage.setItem('identityObject', JSON.stringify(this.identityObject));
+                this.fire('iron-signal', {name: 'load-identity-object', data: {identityObject: this.identityObject}});
             },
 
             preLoad: function () {
@@ -142,6 +144,7 @@
                 this.auth = null;
                 localStorage.removeItem('auth');
                 this._setIdentityObject(null);
+                localStorage.removeItem('identityObject');
             }
         });
     </script>
