@@ -99,8 +99,8 @@
             },
 
             _responseIdentityObjectListener: function (event) {
+                this.fire('iron-signal', {name: 'load-identity-object', data: {identityObject: event.detail.response}});
                 this._setIdentityObject(event.detail.response);
-                this.fire('iron-signal', {name: 'load-identity-object', data: {identityObject: this.identityObject}});
             },
 
             preLoad: function () {
