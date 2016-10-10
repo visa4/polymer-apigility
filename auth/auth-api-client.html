@@ -6,7 +6,7 @@
 
 <dom-module id="apigility-auth-api-client">
     <template>
-        <iron-signals on-iron-signal-refresh-auth-complete="_resendLastRequestListener"></iron-signals>
+        <iron-signals on-iron-signal-refresh-authentication="_resendLastRequestListener"></iron-signals>
         <iron-ajax id="ironAjax" content-type="{{contentType}}"></iron-ajax>
         <content></content>
     </template>

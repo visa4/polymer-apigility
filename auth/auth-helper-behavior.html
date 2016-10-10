@@ -1,0 +1,17 @@
+<script>
+
+  window.PolymerApigility = window.PolymerApigility || {};
+
+  PolymerApigility.AuthHelperBehavior = {
+
+    isAuth: function () {
+
+      var isAuth = false;
+      for(var key in this.auth){
+        isAuth = true;
+      }
+
+      return isAuth;
+    }
+  };
+</script>

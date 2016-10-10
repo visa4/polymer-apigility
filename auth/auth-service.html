@@ -85,9 +85,10 @@
                 if (bodyRequest && bodyRequest.grant_type && typeof bodyRequest.grant_type === 'string') {
                     switch (bodyRequest.grant_type) {
                         case "refresh_token" :
-                            this.fire('iron-signal', {name: 'refresh-auth-complete', data: {auth: this.auth}});
+                            this.fire('iron-signal', {name: 'refresh-authentication', data: {auth: this.auth}});
                             break;
                         default :
+                            this.fire('iron-signal', {name: 'authentication', data: {auth: this.auth}});
                             this.loadIdentityObject(this.auth.access_token);
                     }
                 }
