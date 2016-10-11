@@ -19,7 +19,7 @@
                 value: false
             },
 
-            genericError: {
+            errorMessage: {
                 type: String,
                 readOnly: true,
                 notify: true,
@@ -156,7 +156,7 @@
         resetErrorMessages: function () {
 
             this.setErrorMessages([]);
-            this._setGenericError(null);
+            this._setErrorMessage(null);
         },
 
         /**
