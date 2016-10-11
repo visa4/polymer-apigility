@@ -1,0 +1,75 @@
+
+<link rel="import" href="rest-paginator-aware-behavior.html">
+<link rel="import" href="../auth/auth-aware-behavior.html">
+<link rel="import" href="../api-client-config-behavior.html">
+<link rel="import" href="../api-client-behavior.html">
+<link rel="import" href="../api-client-request-behavior.html">
+<link rel="import" href="./../api-resource.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/iron-signal/iron-signals.html">
+
+<dom-module id="apigility-rpc-api-client">
+    <template>
+        <iron-signals on-iron-signal-refresh-authentication="_resendLastRequestListener"></iron-signals>
+        <iron-ajax id="ironAjax" content-type="{{contentType}}"></iron-ajax>
+        <content></content>
+    </template>
+    <script>
+        'use strict';
+
+        Polymer({
+            is: 'apigility-rpc-api-client',
+
+            properties: {
+
+                response: {
+                    type: Array,
+                    readOnly: true,
+                    notify: true
+                },
+
+                autoLoad: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+
+            behaviors: [
+                PolymerApigility.ApiClientBehavior,
+                PolymerApigility.ApiClientConfigBehavior,
+                PolymerApigility.ApiClientRequestBehavior,
+                PolymerApigility.AuthAwareBehavior,
+                PolymerApigility.RestPaginatorBehavior
+            ],
+
+            ready: function () {
+                this.$.ironAjax.addEventListener('response', this.responseRestListener.bind(this));
+                this.$.ironAjax.addEventListener('error', this.errorRestListener.bind(this));
+            },
+
+            /**
+             * Success response handler
+             *
+             * @param e
+             */
+            responseRestListener: function (e) {
+
+                if (e.detail.response) {
+                    this._setResponse(e.detail.response);
+                }
+                this.fire('rpc-response', {'response': this.response});
+            },
+
+            /**
+             * Error response handler
+             *
+             * @param e
+             */
+            errorRestListener: function (e) {
+                // TODO TEST
+                this.fire('rpc-error', {'request': e.detail.request, rpcClient: this});
+            }
+        });
+    </script>
+
+</dom-module>
