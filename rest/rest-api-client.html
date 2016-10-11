@@ -168,8 +168,8 @@
                 // TODO add query params and merge
                 var _query = {"page": this.page, "page_size": this.pageSize};
                 if (query !== null && query instanceof Object) {
-                    for (var query in this.headers) {
-                        _query[query] = query[query].toString();
+                    for (var key in query) {
+                        _query[key] = query[key].toString();
                     }
                 }
                 this.createRequest('GET', null, null, _query);
