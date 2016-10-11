@@ -1,3 +1,5 @@
+
+<link rel="import" href="rest-paginator-aware-behavior.html">
 <link rel="import" href="../auth/auth-aware-behavior.html">
 <link rel="import" href="../api-client-config-behavior.html">
 <link rel="import" href="../api-client-behavior.html">
@@ -15,7 +17,6 @@
     <script>
         'use strict';
 
-<link rel="import" href="rest-paginator-aware-behavior.html">
         Polymer({
             is: 'apigility-rpc-api-client',
 
@@ -37,7 +38,7 @@
                 PolymerApigility.ApiClientBehavior,
                 PolymerApigility.ApiClientConfigBehavior,
                 PolymerApigility.ApiClientRequestBehavior,
-                PolymerApigility.AuthAwareBehavior,
+                PolymerApigility.AuthAwareBehavior,on-lower-threshold="__process"
                 PolymerApigility.RestPaginatorBehavior
             ],
 
