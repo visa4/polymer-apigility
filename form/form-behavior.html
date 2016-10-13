@@ -39,10 +39,8 @@
             this._customElements = [];
             // Holds the initial values of the custom elements registered with this form.
             this._customElementsInitialValues = [];
-        },
 
-        attached: function () {
-            var button = this.querySelector('[submit-button]');
+            var button = this.queryEffectiveChildren('[submit-button]');
             if (button) {
                 button.addEventListener('tap', this._onSubmit.bind(this));
             }
