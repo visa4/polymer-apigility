@@ -99,7 +99,8 @@
 
         getResource: function () {
             if (!this.resource) {
-                this.resource = this.querySelector('apigility-resource');
+
+                this.resource =  this.queryEffectiveChildren('apigility-resource');
             }
 
             if (!this.resource) {

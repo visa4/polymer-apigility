@@ -1,0 +1,102 @@
+<link rel="import" href="../rpc-api-client.html">
+<link rel="import" href="../../form/form-behavior.html">
+
+<dom-module id="apigility-rpc-form">
+    <template>
+        <apigility-rpc-api-client
+                id="rpcClient"
+                base-url="{{baseUrl}}"
+                auth="{{auth}}"
+                method="{{method}}"
+                content-type="{{contentType}}">
+            <content select="apigility-resource"></content>
+        </apigility-rpc-api-client>
+        <content></content>
+    </template>
+    <script>
+        'use strict';
+
+        Polymer({
+            is: 'apigility-rpc-form',
+            extends: 'form',
+
+            properties: {
+
+                method: {
+                  type: String,
+                  value: "application/json"
+                },
+
+                auth: {
+                    type: Object,
+                    value: null
+                },
+
+                contentType: {
+                    type: String,
+                    value: "application/json"
+                }
+            },
+
+            behaviors: [
+                PolymerApigility.FormBehavior
+            ],
+
+            /**
+             */
+            listeners: {
+                'submit': '_onSubmit'
+            },
+
+            _onSubmit: function (event) {
+                this.submit();
+
+                // Don't perform a page refresh.
+                if (event) {
+                    event.preventDefault();
+                }
+
+                return false;
+            },
+
+
+            /**
+             * Called to submit the form.
+             */
+            submit: function () {
+
+                var restoreMultiPartFormDataContentType = false;
+                if (!this.noValidate && !this.validate()) {
+                    // In order to trigger the native browser invalid-form UI, we need to do perform a fake form submit.
+                    if (!this.disableNativeValidationUi) {
+                        this._doFakeSubmitForValidation();
+                    }
+                    this.fire('rpc-form-invalid-local',  {'ironRequest': this.$.rpcClient.$.ironAjax});
+                    return;
+                }
+
+                var data = {};
+                switch (this.contentType) {
+                    case 'multipart/form-data':
+                        data = this.getFormData();
+                        this.contentType = null;
+                        restoreMultiPartFormDataContentType = true;
+                        break;
+                    default:
+                        data = this.serialize();
+                }
+
+                var event = this.fire('rpc-form-presubmit', {'form': this}, {cancelable: true});
+                if(event.defaultPrevented) {
+                   return;
+                }
+
+                this.$.rpcClient.createRequest(this.method, data);
+
+                if (restoreMultiPartFormDataContentType) {
+                    this.contentType = 'multipart/form-data';
+                }
+            }
+        });
+    </script>
+</dom-module>
