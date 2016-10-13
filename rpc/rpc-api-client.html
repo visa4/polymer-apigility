@@ -54,7 +54,7 @@
                 if (e.detail.response) {
                     this._setResponse(e.detail.response);
                 }
-                this.fire('rpc-response', {'response': this.response});
+                this.fire('rpc-response', {'response': this.response, rpcClient: this});
             },
 
             /**
