@@ -64,7 +64,7 @@
              */
             errorRestListener: function (e) {
                 // TODO TEST
-                this.fire('rpc-error', {'request': e.detail.request, rpcClient: this});
+                this.fire('rpc-error', {'response': e.detail.request.response, rpcClient: this});
             }
         });
     </script>
