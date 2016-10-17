@@ -156,8 +156,7 @@
              * @param e
              */
             errorRestListener: function (e) {
-                // TODO TEST
-                this.fire('rest-error', {'request': e.detail.request, restClient: this});
+                this.fire('rest-error', {'response': e.detail.request.response, restClient: this});
             },
 
             get: function() {
@@ -165,7 +164,6 @@
             },
 
             getAll: function(query) {
-                // TODO add query params and merge
                 var _query = {"page": this.page, "page_size": this.pageSize};
                 if (query !== null && query instanceof Object) {
                     for (var key in query) {

@@ -3,6 +3,15 @@
 <link rel="import" href="../api-resource.html">
 <link rel="import" href="../../../bower_components/iron-signal/iron-signals.html">
 
+<!--
+Event fire from iron signal (GLOBAL)
+
+ * refresh-authentication (refresh token is complete)
+ * authentication (authentication is complete)
+ * load-identity-object (load identity object is complete)
+ * logout (logout is complete)
+
+-->
 <dom-module id="apigility-auth-service">
     <template>
         <iron-signals on-iron-signal-refresh-auth="_401Listener"></iron-signals>
