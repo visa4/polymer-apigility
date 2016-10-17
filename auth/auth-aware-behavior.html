@@ -46,7 +46,7 @@
         errorAuthAwareListener: function (event) {
             if (event.detail.request.status === 401 && this.auth) {
                 this._setReSendLastRequest(true);
-                this.fire('iron-signal', {name: 'refresh-authentication', data: {auth: this.auth}});
+                this.fire('iron-signal', {name: 'refresh-auth', data: {auth: this.auth}});
             }
         },
 
