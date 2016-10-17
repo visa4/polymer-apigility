@@ -9,7 +9,8 @@
                 auth="{{auth}}"
                 content-type="{{contentType}}"
                 entity="{{entity}}"
-                auto-load="{{autoLoad}}">
+                auto-load="{{autoLoad}}"
+                loading="{{loading}}">
             <content select="apigility-resource"></content>
         </apigility-rest-api-client>
         <content></content>
@@ -46,7 +47,13 @@
                 contentType: {
                     type: String,
                     value: "application/json"
-                }
+                },
+
+                loading: {
+                    type: Boolean,
+                    notify: true,
+                    readOnly: true
+                },
             },
 
             behaviors: [

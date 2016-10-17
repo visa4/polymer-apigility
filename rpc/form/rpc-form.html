@@ -8,7 +8,8 @@
                 base-url="{{baseUrl}}"
                 auth="{{auth}}"
                 method="{{method}}"
-                content-type="{{contentType}}">
+                content-type="{{contentType}}"
+                loading="{{loading}}">
             <content select="apigility-resource"></content>
         </apigility-rpc-api-client>
         <content></content>
@@ -35,7 +36,13 @@
                 contentType: {
                     type: String,
                     value: "application/json"
-                }
+                },
+
+                loading: {
+                    type: Boolean,
+                    notify: true,
+                    readOnly: true
+                },
             },
 
             behaviors: [
