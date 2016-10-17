@@ -76,8 +76,9 @@
             },
 
             _onSubmit: function (event) {
-                this.submit();
 
+                this.submit();
+                this.fire('auth-form-submit');
                 // Don't perform a page refresh.
                 if (event) {
                     event.preventDefault();
