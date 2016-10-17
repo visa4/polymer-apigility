@@ -16,10 +16,10 @@ Event fire from iron signal (GLOBAL)
     <template>
         <iron-signals on-iron-signal-refresh-auth="_401Listener"></iron-signals>
         <iron-signals on-iron-signal-identity-object="_identityObjectListener"></iron-signals>
-        <apigility-client id="oauthClient" content-type="{{contentType}}">
+        <apigility-client id="oauthClient" content-type="{{contentType}}" loading="{{loading}}">
             <apigility-resource resource-name="{{oauthService}}"></apigility-resource>
         </apigility-client>
-        <apigility-auth-api-client id="identityClient" content-type="{{contentType}}" auth="{{auth}}">
+        <apigility-auth-api-client id="identityClient" content-type="{{contentType}}" auth="{{auth}}" loading="{{loadingIdentityObject}}">
             <apigility-resource resource-name="{{identityService}}"></apigility-resource>
         </apigility-auth-api-client>
     </template>
@@ -64,6 +64,18 @@ Event fire from iron signal (GLOBAL)
                     readOnly: true,
                     notify: true,
                     value: null
+                },
+
+                loading: {
+                    type: Boolean,
+                    notify: true,
+                    readOnly: true
+                },
+
+                loadingIdentityObject: {
+                    type: Boolean,
+                    notify: true,
+                    readOnly: true
                 }
             },
 

@@ -9,7 +9,7 @@
 <dom-module id="apigility-rpc-api-client">
     <template>
         <iron-signals on-iron-signal-refresh-authentication="_resendLastRequestListener"></iron-signals>
-        <iron-ajax id="ironAjax" content-type="{{contentType}}"></iron-ajax>
+        <iron-ajax id="ironAjax" content-type="{{contentType}}" loading="{{loading}}"></iron-ajax>
         <content></content>
     </template>
     <script>
@@ -63,7 +63,6 @@
              * @param e
              */
             errorRestListener: function (e) {
-                // TODO TEST
                 this.fire('rpc-error', {'response': e.detail.request.response, rpcClient: this});
             }
         });

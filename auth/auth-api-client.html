@@ -2,12 +2,12 @@
 <link rel="import" href="../api-client-config-behavior.html">
 <link rel="import" href="../api-client-behavior.html">
 <link rel="import" href="../api-client-request-behavior.html">
-<link rel="import" href="../../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="apigility-auth-api-client">
     <template>
         <iron-signals on-iron-signal-refresh-authentication="_resendLastRequestListener"></iron-signals>
-        <iron-ajax id="ironAjax" content-type="{{contentType}}"></iron-ajax>
+        <iron-ajax id="ironAjax" content-type="{{contentType}}" loading="{{loading}}"></iron-ajax>
         <content></content>
     </template>
     <script>
