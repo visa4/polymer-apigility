@@ -103,15 +103,18 @@ Event fire from iron signal (GLOBAL)
                 localStorage.setItem('auth', JSON.stringify(this.auth));
 
                 var bodyRequest = event.detail.ironAjax.body;
-                if (bodyRequest && bodyRequest.grant_type && typeof bodyRequest.grant_type === 'string') {
-                    switch (bodyRequest.grant_type) {
-                        case "refresh_token" :
-                            this.fire('iron-signal', {name: 'refresh-authentication', data: {auth: this.auth}});
-                            break;
-                        default :
-                            this.fire('iron-signal', {name: 'authentication', data: {auth: this.auth}});
-                            this.loadIdentityObject(this.auth.access_token);
-                    }
+
+                if (bodyRequest == null || bodyRequest == undefined) {
+                    bodyRequest = {};
+                }
+
+                switch (bodyRequest.grant_type) {
+                    case "refresh_token" :
+                        this.fire('iron-signal', {name: 'refresh-authentication', data: {auth: this.auth}});
+                        break;
+                    default :
+                        this.fire('iron-signal', {name: 'authentication', data: {auth: this.auth}});
+                        this.loadIdentityObject(this.auth.access_token);
                 }
             },
 
