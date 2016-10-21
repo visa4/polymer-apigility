@@ -46,6 +46,11 @@
                 }
 
                 this.authClient.$.oauthClient.$.ironAjax.addEventListener('error', this._responseAuthFormErrorListener.bind(this));
+                this.authClient.$.oauthClient.$.ironAjax.addEventListener('request', this._resetErrorMessage.bind(this));
+            },
+
+            _resetErrorMessage: function (e) {
+                this.resetErrorMessages();
             },
 
             _responseAuthFormErrorListener: function (event) {

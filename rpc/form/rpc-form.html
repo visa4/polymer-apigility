@@ -54,6 +54,14 @@
                 'submit': '_onSubmit'
             },
 
+            ready: function() {
+                this.$.rpcClient.$.ironAjax.addEventListener('request', this._resetErrorMessage.bind(this));
+            },
+
+            _resetErrorMessage: function (e) {
+                this.resetErrorMessages();
+            },
+
             /**
              * Called to submit the form.
              */

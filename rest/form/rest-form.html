@@ -59,10 +59,6 @@
                 PolymerApigility.FormBehavior
             ],
 
-            ready: function() {
-                this.client = this.$.restClient;
-            },
-
             /**
              */
             listeners: {
@@ -73,6 +69,15 @@
                 'rest-patch-response': '_patchResponseListener',
                 'rest-error': '_errorResponseListener'
             },
+
+            ready: function() {
+                this.$.restClient.$.ironAjax.addEventListener('request', this._resetErrorMessage.bind(this));
+            },
+
+            _resetErrorMessage: function (e) {
+                this.resetErrorMessages();
+            },
+
 
             /**
              * Populate value when rest-iron-ajax trigger a GET request
@@ -166,16 +171,16 @@
                 if (this.$.restClient.isEntity()) {
                     switch (this.updateMethod.toUpperCase()) {
                         case 'PUT':
-                            this.client.put(data);
+                            this.$.restClient.put(data);
                             break;
                         case 'PATCH':
-                            this.client.patch(data);
+                            this.$.restClient.patch(data);
                             break;
                         default:
                             throw "Invalid method " + this.updateMethod.toUpperCase();
                     }
                 } else {
-                    this.client.post(data);
+                    this.$.restClient.post(data);
                 }
 
                 if (restoreMultiPartFormDataContentType) {
