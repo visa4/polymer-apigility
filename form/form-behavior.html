@@ -46,7 +46,7 @@
             }
 
             if (button) {
-                button.addEventListener('tap', this._onSubmit.bind(this));
+                button.addEventListener('tap', this.submit.bind(this));
             }
         },
 
@@ -55,7 +55,8 @@
             if (!(typeof this.submit == 'function')) {
                console.warn('submit funtion must be set on this element: ' + this.is);
             }
-            this.submit();
+
+
             this.fire('form-submit');
             this.resetErrorMessages();
             // Don't perform a page refresh.
