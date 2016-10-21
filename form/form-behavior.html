@@ -50,6 +50,22 @@
             }
         },
 
+        _onSubmit: function (event) {
+
+            if (!(typeof this.submit == 'function')) {
+               console.warn('submit funtion must be set on this element: ' + this.is);
+            }
+            this.submit();
+            this.fire('form-submit');
+            this.resetErrorMessages();
+            // Don't perform a page refresh.
+            if (event) {
+                event.preventDefault();
+            }
+
+            return false;
+        },
+
         /**
          * Handler that is called when the native form fires a `reset` event
          *
@@ -265,14 +281,12 @@
          * @return {boolean} True if the element has a `checked` property.
          */
         _usesCheckedInsteadOfValue: function (el) {
-            if (el.type == 'checkbox' ||
-                    el.type == 'radio' ||
-                    el.getAttribute('role') == 'checkbox' ||
-                    el.getAttribute('role') == 'radio' ||
-                    el._hasIronCheckedElementBehavior) {
-                return true;
-            }
-            return false;
+            return !!(el.type == 'checkbox' ||
+            el.type == 'radio' ||
+            el.getAttribute('role') == 'checkbox' ||
+            el.getAttribute('role') == 'radio' ||
+            el._hasIronCheckedElementBehavior);
+
         },
 
         _useValue: function (el) {

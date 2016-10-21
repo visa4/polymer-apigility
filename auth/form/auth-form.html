@@ -48,17 +48,6 @@
                 this.authClient.$.oauthClient.$.ironAjax.addEventListener('error', this._responseAuthFormErrorListener.bind(this));
             },
 
-            _onSubmit: function (event) {
-                this.submit();
-                this.resetErrorMessages();
-                // Don't perform a page refresh.
-                if (event) {
-                    event.preventDefault();
-                }
-
-                return false;
-            },
-
             _responseAuthFormErrorListener: function (event) {
                 switch (true) {
                     case event.detail.request.status === 400:

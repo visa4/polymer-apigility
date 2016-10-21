@@ -74,18 +74,6 @@
                 'rest-error': '_errorResponseListener'
             },
 
-            _onSubmit: function (event) {
-
-                this.submit();
-                this.fire('auth-form-submit');
-                // Don't perform a page refresh.
-                if (event) {
-                    event.preventDefault();
-                }
-
-                return false;
-            },
-
             /**
              * Populate value when rest-iron-ajax trigger a GET request
              */

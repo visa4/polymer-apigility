@@ -54,18 +54,6 @@
                 'submit': '_onSubmit'
             },
 
-            _onSubmit: function (event) {
-                this.submit();
-
-                // Don't perform a page refresh.
-                if (event) {
-                    event.preventDefault();
-                }
-
-                return false;
-            },
-
-
             /**
              * Called to submit the form.
              */
