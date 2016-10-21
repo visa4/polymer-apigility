@@ -87,16 +87,19 @@
              * Set identifier after post
              */
             _postResponseListener: function (event) {
+                this.resetErrorMessages();
                 this.reset();
                 this.identify = event.detail.restClient.entity.id;
                 this._dispatchResponse(event);
             },
 
             _putResponseListener: function (event) {
+                this.resetErrorMessages();
                 this._dispatchResponse(event);
             },
 
             _patchResponseListener: function (event) {
+                this.resetErrorMessages();
                 this._dispatchResponse(event);
             },
 
@@ -109,6 +112,7 @@
              */
             _errorResponseListener: function (event) {
 
+                this.resetErrorMessages();
                 this.fire('rest-form-invalid-remote', {'ironRequest': event.detail.ironRequest});
                 var bodyResponse = event.detail.response;
                 switch (true) {

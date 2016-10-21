@@ -46,7 +46,7 @@
             }
 
             if (button) {
-                button.addEventListener('tap', this.submit().bind(this));
+                button.addEventListener('tap', this._onSubmit.bind(this));
             }
         },
 
