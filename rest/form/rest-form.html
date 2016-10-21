@@ -116,18 +116,18 @@
                         if (bodyResponse.validation_messages) {
                             this.setErrorMessages(bodyResponse.validation_messages);
                         } else {
-                            this._setGenericError(event.detail.response.title);
+                            this._setErrorMessage(event.detail.response.title);
                         }
                         break;
                     case event.detail.response.status >= 500:
                         if (event.detail.response.detail) {
-                            this._setGenericError(event.detail.response.detail);
+                            this._setErrorMessage(event.detail.response.detail);
                         } else {
-                            this._setGenericError(event.detail.response);
+                            this._setErrorMessage(event.detail.response);
                         }
                         break;
                     default :
-                        this._setGenericError(event.detail.response);
+                        this._setErrorMessage(event.detail.response);
                 }
             },
 
