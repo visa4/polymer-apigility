@@ -30,8 +30,11 @@
         listeners: {
             'iron-form-element-register': '_registerElement',
             'iron-form-element-unregister': '_unregisterElement',
-            'reset': '_onReset'
+            'reset': '_onReset',
+            'submit': '_onSubmit'
         },
+
+
 
         ready: function () {
 
@@ -52,12 +55,7 @@
 
         _onSubmit: function (event) {
 
-            if (!(typeof this.submit == 'function')) {
-               console.warn('submit funtion must be set on this element: ' + this.is);
-            }
 
-
-            this.fire('form-submit');
             this.resetErrorMessages();
             // Don't perform a page refresh.
             if (event) {

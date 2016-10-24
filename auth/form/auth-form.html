@@ -80,6 +80,7 @@
              */
             submit: function () {
 
+                this.fire('form-submit');
                 if (!this.noValidate && !this.validate()) {
                     // In order to trigger the native browser invalid-form UI, we need to do perform a fake form submit.
                     if (!this.disableNativeValidationUi) {

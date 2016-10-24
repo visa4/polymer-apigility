@@ -48,11 +48,6 @@
                 PolymerApigility.FormBehavior
             ],
 
-            /**
-             */
-            listeners: {
-                'submit': '_onSubmit'
-            },
 
             ready: function() {
                 this.$.rpcClient.$.ironAjax.addEventListener('request', this._resetErrorMessage.bind(this));
@@ -67,6 +62,7 @@
              */
             submit: function () {
 
+                this.fire('form-submit');
                 var restoreMultiPartFormDataContentType = false;
                 if (!this.noValidate && !this.validate()) {
                     // In order to trigger the native browser invalid-form UI, we need to do perform a fake form submit.
