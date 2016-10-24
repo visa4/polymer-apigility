@@ -62,7 +62,6 @@
              */
             submit: function () {
 
-                this.fire('form-submit');
                 var restoreMultiPartFormDataContentType = false;
                 if (!this.noValidate && !this.validate()) {
                     // In order to trigger the native browser invalid-form UI, we need to do perform a fake form submit.
@@ -90,7 +89,7 @@
                 }
 
                 this.$.rpcClient.createRequest(this.method, data);
-
+                this.fire('form-submit');
                 if (restoreMultiPartFormDataContentType) {
                     this.contentType = 'multipart/form-data';
                 }
