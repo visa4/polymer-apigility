@@ -1,0 +1,117 @@
+<script>
+
+    window.PolymerApigility = window.PolymerApigility || {};
+
+    PolymerApigility.ApiClientRequestBehavior = {
+
+        /**
+         * An object that maps header names to header values
+         *
+         * @return {Object}
+         */
+        requestHeaders: function(headers) {
+            var mergedHeaders = {};
+
+            if (this.$.ironAjax.headers !== null && this.$.ironAjax.headers instanceof Object) {
+                for (var header in this.$.ironAjax.headers) {
+                    mergedHeaders[header] = this.$.ironAjax.headers[header].toString();
+                }
+            }
+
+            if (this.headers !== null && this.headers instanceof Object) {
+                for (var header in this.headers) {
+                    mergedHeaders[header] = this.headers[header].toString();
+                }
+            }
+
+            if (headers !== null && headers instanceof Object) {
+                for (var header in headers) {
+                    mergedHeaders[header] = headers[header].toString();
+                }
+            }
+
+            return mergedHeaders;
+        },
+
+        /**
+         * An object that maps query names to query values
+         *
+         * @return {Object}
+         */
+        requestQuery: function(queries) {
+            var mergedQueries = {};
+
+            if (this.queries !== null && this.queries instanceof Object) {
+                for (var query in this.queries) {
+                    mergedQueries[query] = this.queries[query].toString();
+                }
+            }
+
+            if (queries !== null && queries instanceof Object) {
+                for (var query in queries) {
+                    mergedQueries[query] = queries[query].toString();
+                }
+            }
+
+            return mergedQueries;
+        },
+
+        requestUrl: function () {
+
+            var url = this.baseUrl;
+            var resource = this.getResource();
+            if (resource) {
+                url += resource.getFullPath();
+            }
+            return url;
+        },
+
+        /**
+         * Create request
+         *
+         * @param method string
+         * @param data object
+         * @param headers object
+         * @param queries object
+         */
+        createRequest: function (method, data, headers, queries) {
+
+            this.$.ironAjax.url     = this.requestUrl();
+            this.$.ironAjax.headers = this.requestHeaders(headers);
+            this.$.ironAjax.params  = this.requestQuery(queries);
+            this.$.ironAjax.method  = (method) ? method : this.method;
+            this.$.ironAjax.body    = (data) ? data : null;
+
+            var event = this.fire('api-request-presend',  this.$.ironAjax, {}, {cancelable: true});
+
+            if(!event.defaultPrevented) {
+                event.detail.generateRequest();
+            }
+        },
+
+        setNestedId: function (id) {
+            return this.getResource().setNestedId(id);
+        },
+
+        isEntity: function () {
+            return this.getResource().isEntity();
+        },
+
+        getResource: function () {
+            if (!this.resource) {
+
+                this.resource = this.queryEffectiveChildren('apigility-resource');
+                if (!this.resource) {
+                    this.resource = this.querySelector('apigility-resource');
+                }
+
+            }
+
+            if (!this.resource) {
+                throw 'Resource not config in ' + this.is;
+            }
+
+            return this.resource;
+        }
+    };
+</script>

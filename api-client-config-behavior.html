@@ -1,0 +1,42 @@
+<script>
+
+    window.PolymerApigility = window.PolymerApigility || {};
+
+    PolymerApigility.ApiClientConfigBehavior = {
+
+        ready: function () {
+
+            if (!this.$.ironAjax) {
+                throw "Iron ajax not found";
+            }
+
+            /**
+             * Set baseUrl if isn't set on the custom element attributes
+             */
+            var baseUrl = new Polymer.IronMetaQuery({type:'apigility', key: 'base-url'}).value;
+            if (!this.baseUrl && baseUrl) {
+                this.baseUrl = baseUrl;
+            }
+
+            /**
+             * Set contentType if isn't set on the custom element attributes
+             */
+            var contentType = new Polymer.IronMetaQuery({type:'apigility', key: 'content-type'}).value;
+            if (!this.contentType && contentType) {
+                this.$.ironAjax.contentType = contentType;
+            }
+
+            var headers = new Polymer.IronMetaQuery({type:'apigility', key: 'headers'}).value;
+            switch (typeof headers) {
+                case 'string':
+                    try { headers = JSON.parse(headers); }
+                    catch(e) { headers = null; }
+                    break;
+            }
+
+            if (headers) {
+                this.$.ironAjax.headers = headers;
+            }
+        }
+    };
+</script>

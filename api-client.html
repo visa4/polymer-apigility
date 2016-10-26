@@ -1,0 +1,35 @@
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="api-client-config-behavior.html">
+<link rel="import" href="api-client-behavior.html">
+<link rel="import" href="api-client-request-behavior.html">
+
+<dom-module id="apigility-client">
+    <template>
+        <iron-ajax id="ironAjax" content-type="{{contentType}}"></iron-ajax>
+        <content></content>
+    </template>
+    <script>
+        'use strict';
+
+        Polymer({
+            is: 'apigility-client',
+
+            behaviors: [
+                PolymerApigility.ApiClientBehavior,
+                PolymerApigility.ApiClientConfigBehavior,
+                PolymerApigility.ApiClientRequestBehavior
+            ],
+
+
+            ready: function () {
+                this.$.ironAjax.addEventListener('response', this.attachIronAjaxListener.bind(this));
+                this.$.ironAjax.addEventListener('error', this.attachIronAjaxListener.bind(this));
+            },
+
+            attachIronAjaxListener : function (event) {
+                event.detail.ironAjax = this.$.ironAjax;
+            }
+        });
+    </script>
+
+</dom-module>

@@ -1,0 +1,35 @@
+<script>
+
+  window.PolymerApigility = window.PolymerApigility || {};
+
+  PolymerApigility.AuthHelperBehavior = {
+
+      properties: {
+
+          auth: {
+              type: Object,
+              notify:true,
+              observer: '_authChanged'
+          },
+
+          isAuth: {
+              type: Boolean,
+              notify:true,
+              value: false
+          },
+
+          identityObject: {
+              type: Object,
+              notify: true
+          }
+      },
+
+      _authChanged: function () {
+          this.isAuth = false;
+          for(var key in this.auth){
+              this.isAuth = true;
+              return;
+          }
+      }
+  };
+</script>

@@ -1,0 +1,192 @@
+<link rel="import" href="../rest-api-client.html">
+<link rel="import" href="../../form/form-behavior.html">
+
+<dom-module id="apigility-rest-form">
+    <template>
+        <apigility-rest-api-client
+                id="restClient"
+                base-url="{{baseUrl}}"
+                auth="{{auth}}"
+                content-type="{{contentType}}"
+                entity="{{entity}}"
+                auto-load="{{autoLoad}}"
+                loading="{{loading}}">
+            <content select="apigility-resource"></content>
+        </apigility-rest-api-client>
+        <content></content>
+    </template>
+    <script>
+        'use strict';
+
+        Polymer({
+            is: 'apigility-rest-form',
+            extends: 'form',
+
+            properties: {
+
+                entity: {
+                    type: Object,
+                    notify: true
+                },
+
+                auth: {
+                    type: Object,
+                    value: null
+                },
+
+                updateMethod: {
+                    type: String,
+                    value: 'PUT'
+                },
+
+                autoLoad: {
+                    type: Boolean,
+                    value: false
+                },
+
+                contentType: {
+                    type: String,
+                    value: "application/json"
+                },
+
+                loading: {
+                    type: Boolean,
+                    notify: true
+                }
+            },
+
+            behaviors: [
+                PolymerApigility.FormBehavior
+            ],
+
+            /**
+             */
+            listeners: {
+                'rest-get-response': '_getResponseListener',
+                'rest-post-response': '_postResponseListener',
+                'rest-put-response': '_putResponseListener',
+                'rest-patch-response': '_patchResponseListener',
+                'rest-error': '_errorResponseListener'
+            },
+
+            ready: function() {
+                this.$.restClient.$.ironAjax.addEventListener('request', this._resetErrorMessage.bind(this));
+            },
+
+            _resetErrorMessage: function (e) {
+                this.resetErrorMessages();
+            },
+
+
+            /**
+             * Populate value when rest-iron-ajax trigger a GET request
+             */
+            _getResponseListener: function (event) {
+                if (event.detail.isEntityRequest) {
+                    this._populateValues(event.detail.restClient.entity);
+                }
+            },
+
+            /**
+             * Set identifier after post
+             */
+            _postResponseListener: function (event) {
+                this.reset();
+                this.identify = event.detail.restClient.entity.id;
+                this._dispatchResponse(event);
+            },
+
+            _putResponseListener: function (event) {
+                this._dispatchResponse(event);
+            },
+
+            _patchResponseListener: function (event) {
+                this._dispatchResponse(event);
+            },
+
+            _dispatchResponse: function (event) {
+                this.fire('rest-form-response', {'restClient': event.detail.rest});
+            },
+
+            /**
+             * Populate error message of the forms element
+             */
+            _errorResponseListener: function (event) {
+
+                this.fire('rest-form-invalid-remote', {'ironRequest': event.detail.ironRequest});
+                var bodyResponse = event.detail.response;
+                switch (true) {
+                    case event.detail.response.status == 422:
+                        if (bodyResponse.validation_messages) {
+                            this.setErrorMessages(bodyResponse.validation_messages);
+                        } else {
+                            this._setErrorMessage(event.detail.response.title);
+                        }
+                        break;
+                    case event.detail.response.status >= 500:
+                        if (event.detail.response.detail) {
+                            this._setErrorMessage(event.detail.response.detail);
+                        } else {
+                            this._setErrorMessage(event.detail.response);
+                        }
+                        break;
+                    default :
+                        this._setErrorMessage(event.detail.response);
+                }
+            },
+
+
+            /**
+             * Called to submit the form.
+             */
+            submit: function () {
+
+                var restoreMultiPartFormDataContentType = false;
+                if (!this.noValidate && !this.validate()) {
+                    // In order to trigger the native browser invalid-form UI, we need to do perform a fake form submit.
+                    if (!this.disableNativeValidationUi) {
+                        this._doFakeSubmitForValidation();
+                    }
+                    this.fire('rest-form-invalid-local',  {'ironRequest': this.$.restClient.$.ironAjax});
+                    return;
+                }
+
+                var data = {};
+                switch (this.contentType) {
+                    case 'multipart/form-data':
+                        data = this.getFormData();
+                        this.contentType = null;
+                        restoreMultiPartFormDataContentType = true;
+                        break;
+                    default:
+                        data = this.serialize();
+                }
+
+                var event = this.fire('rest-form-presubmit', {'form': this}, {cancelable: true});
+                if(event.defaultPrevented) {
+                   return;
+                }
+
+                if (this.$.restClient.isEntity()) {
+                    switch (this.updateMethod.toUpperCase()) {
+                        case 'PUT':
+                            this.$.restClient.put(data);
+                            break;
+                        case 'PATCH':
+                            this.$.restClient.patch(data);
+                            break;
+                        default:
+                            throw "Invalid method " + this.updateMethod.toUpperCase();
+                    }
+                } else {
+                    this.$.restClient.post(data);
+                }
+                this.fire('form-submit');
+
+                if (restoreMultiPartFormDataContentType) {
+                    this.contentType = 'multipart/form-data';
+                }
+            }
+        });
+    </script>
+</dom-module>

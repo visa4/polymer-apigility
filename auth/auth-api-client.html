@@ -1,0 +1,38 @@
+<link rel="import" href="auth-aware-behavior.html">
+<link rel="import" href="../api-client-config-behavior.html">
+<link rel="import" href="../api-client-behavior.html">
+<link rel="import" href="../api-client-request-behavior.html">
+<link rel="import" href="../../iron-ajax/iron-ajax.html">
+
+<dom-module id="apigility-auth-api-client">
+    <template>
+        <iron-signals on-iron-signal-refresh-authentication="_resendLastRequestListener"></iron-signals>
+        <iron-ajax id="ironAjax" content-type="{{contentType}}" loading="{{loading}}"></iron-ajax>
+        <content></content>
+    </template>
+    <script>
+        'use strict';
+
+        Polymer({
+            is: 'apigility-auth-api-client',
+
+            behaviors: [
+                PolymerApigility.ApiClientBehavior,
+                PolymerApigility.ApiClientConfigBehavior,
+                PolymerApigility.ApiClientRequestBehavior,
+                PolymerApigility.AuthAwareBehavior
+            ],
+
+
+            ready: function () {
+                this.$.ironAjax.addEventListener('response', this.attachIronAjaxListener.bind(this));
+                this.$.ironAjax.addEventListener('error', this.attachIronAjaxListener.bind(this));
+            },
+
+            attachIronAjaxListener : function (event) {
+                event.detail.ironAjax = this.$.ironAjax;
+            }
+        });
+    </script>
+
+</dom-module>

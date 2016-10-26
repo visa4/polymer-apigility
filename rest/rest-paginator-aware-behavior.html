@@ -1,0 +1,65 @@
+<script>
+    window.PolymerApigility = window.PolymerApigility || {};
+
+    PolymerApigility.RestPaginatorBehavior = {
+        properties: {
+            page: {
+                type: Number,
+                value: 1,
+                observer: '_pageChanged'
+            },
+
+            pageSize: {
+                type: Number,
+                value: 10,
+                observer: '_pageSizeChanged'
+            },
+
+            pageCount: {
+                type: Number,
+                readOnly: true,
+                notify: true
+            },
+
+            totalItems: {
+                type: Number,
+                readOnly: true,
+                notify: true
+            }
+        },
+
+        ready: function () {
+            this.$.ironAjax.addEventListener('response', this.paginationListener.bind(this));
+        },
+
+        /**
+         * @param e
+         */
+        paginationListener: function (e) {
+            if (e.detail.response && e.detail.response._embedded) {
+                this._setPageCount(e.detail.response.page_count);
+                this._setTotalItems( e.detail.response.total_items);
+            }
+        },
+
+        _pageChanged: function (newValue, oldValue) {
+            if (oldValue === undefined) {
+                return;
+            }
+
+            if (oldValue && newValue && oldValue != newValue) {
+                this. getAll();
+            }
+        },
+
+        _pageSizeChanged: function (newValue, oldValue) {
+            if (oldValue === undefined) {
+                return;
+            }
+
+            if (oldValue && newValue && oldValue != newValue) {
+                this. getAll();
+            }
+        }
+    };
+</script>

@@ -1,0 +1,60 @@
+<link rel="import" href="../../../bower_components/iron-signal/iron-signals.html">
+
+<dom-module id="apigility-auth-handler">
+    <template>
+        <iron-signals on-iron-signal-logout="_logout"></iron-signals>
+        <iron-signals on-iron-signal-authentication="_authentication"></iron-signals>
+        <iron-signals on-iron-signal-load-identity-object="_loadIdentityObject"></iron-signals>
+    </template>
+
+    <script>
+
+        Polymer({
+
+            is: 'apigility-auth-handler',
+
+            properties: {
+
+                auth: {
+                    type: Object,
+                    readOnly: true,
+                    notify: true
+                },
+
+                identityObject: {
+                    type: Object,
+                    readOnly: true,
+                    notify: true
+                }
+
+            },
+
+            ready: function () {
+
+                var auth = localStorage.getItem('auth');
+                if (auth) {
+                    this._setAuth(JSON.parse(auth));
+                }
+
+                var identityObject = localStorage.getItem('identityObject');
+                if (identityObject) {
+                    this._setIdentityObject(JSON.parse(identityObject));
+                }
+
+            },
+
+            _logout: function (e) {
+                this._setAuth({});
+                this._setIdentityObject({});
+            },
+
+            _authentication: function (e) {
+                this._setAuth(e.detail.auth);
+            },
+
+            _loadIdentityObject: function (e) {
+                this._setIdentityObject(e.detail.identityObject);
+            }
+        });
+    </script>
+</dom-module>

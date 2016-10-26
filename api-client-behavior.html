@@ -1,0 +1,73 @@
+fire<script>
+
+    window.PolymerApigility = window.PolymerApigility || {};
+
+    PolymerApigility.ApiClientBehavior = {
+
+        properties: {
+
+            baseUrl: {
+                type: String,
+                value: null
+            },
+
+            method: {
+                type: String,
+                value: 'GET'
+            },
+
+            contentType: {
+                type: String,
+                value: null
+            },
+
+            headers: {
+                type: Object,
+                value: null
+            },
+
+            query: {
+                type: Object,
+                value: null
+            },
+
+            body: {
+                type: Object,
+                value: null
+            },
+
+            loading: {
+                type: Boolean,
+                notify: true
+            }
+        },
+
+        ready: function () {
+
+            if (this.$.ironAjax) {
+                this.$.ironAjax.addEventListener('response', this.responseApiClientListener.bind(this));
+                this.$.ironAjax.addEventListener('error', this.responseErrorHandler.bind(this));
+            } else {
+                throw "Iron ajax not found";
+            }
+        },
+
+        /**
+         * Success response handler
+         *
+         * @param e
+         */
+        responseApiClientListener: function (e) {
+            e.detail.apiClient = this;
+        },
+
+        /**
+         * Error response handler
+         *
+         * @param e
+         */
+        responseErrorHandler: function (e) {
+            e.detail.apiClient = this;
+        }
+    };
+</script>

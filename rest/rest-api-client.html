@@ -1,0 +1,194 @@
+<link rel="import" href="rest-paginator-aware-behavior.html">
+<link rel="import" href="../auth/auth-aware-behavior.html">
+<link rel="import" href="../api-client-config-behavior.html">
+<link rel="import" href="../api-client-behavior.html">
+<link rel="import" href="../api-client-request-behavior.html">
+<link rel="import" href="./../api-resource.html">
+<link rel="import" href="../../iron-ajax/iron-ajax.html">
+<link rel="import" href="../../iron-signal/iron-signals.html">
+
+<dom-module id="apigility-rest-api-client">
+    <template>
+        <iron-signals on-iron-signal-refresh-authentication="_resendLastRequestListener"></iron-signals>
+        <iron-ajax id="ironAjax" content-type="{{contentType}}" loading="{{loading}}"></iron-ajax>
+        <content></content>
+    </template>
+    <script>
+        'use strict';
+
+        Polymer({
+            is: 'apigility-rest-api-client',
+
+            properties: {
+
+                collection: {
+                    type: Array,
+                    readOnly: true,
+                    notify: true
+                },
+
+                entity: {
+                    type: Object,
+                    readOnly: true,
+                    notify: true
+                },
+
+                collectionName: {
+                    type: String
+                },
+
+                autoLoad: {
+                    type: Boolean,
+                    value: false
+                },
+
+                readyPath: {
+                    type: Boolean,
+                    readOnly: true,
+                    value: false
+                }
+            },
+
+            behaviors: [
+                PolymerApigility.ApiClientBehavior,
+                PolymerApigility.ApiClientConfigBehavior,
+                PolymerApigility.ApiClientRequestBehavior,
+                PolymerApigility.AuthAwareBehavior,
+                PolymerApigility.RestPaginatorBehavior
+            ],
+
+            listeners: {
+                'change-path': '_changePath',
+                'ready-path':  '_readyPath'
+            },
+
+            observers: [
+                '_readyElement(readyPath, autoLoad)'
+            ],
+
+            ready: function () {
+                this.$.ironAjax.addEventListener('response', this.responseRestListener.bind(this));
+                this.$.ironAjax.addEventListener('error', this.errorRestListener.bind(this));
+            },
+
+            _changePath: function (event) {
+                if (this.method.toUpperCase() == 'GET') {
+                    if (this.getResource().isEntity()) {
+                        this.get();
+                    } else {
+                        this.getAll();
+                    }
+                }
+            },
+
+            _readyPath: function (event) {
+                this._setReadyPath(true);
+            },
+
+            _readyElement: function (readyPath, autoLoad) {
+                if (!autoLoad || !readyPath) {
+                    return;
+                }
+
+                if (this.getResource().isEntity()) {
+                    this.get();
+                } else {
+                    this.getAll();
+                }
+            },
+
+
+            /**
+             * Success response handler
+             *
+             * @param e
+             */
+            responseRestListener: function (e) {
+
+                var isEntityRequest = false;
+                if (e.detail.response && e.detail.response._embedded) {
+                    if (!e.detail.response['_embedded'][this.collectionName]) {
+                       throw 'CollectionName must be set in ' + this.is;
+                    }
+                    this._setCollection(e.detail.response['_embedded'][this.collectionName]);1
+                } else {
+                    isEntityRequest = true;
+                    this._setEntity(e.detail.response);
+                }
+
+                switch (this.$.ironAjax.method.toUpperCase()) {
+                    case 'POST':
+                        this.fire(
+                            'rest-post-response',
+                            {'response': e.detail.response,   restClient: this, isEntityRequest: isEntityRequest}
+                        );
+                        break;
+                    case 'GET':
+                        this.fire(
+                            'rest-get-response',
+                            {'response': e.detail.response, restClient: this, isEntityRequest: isEntityRequest}
+                        );
+                        break;
+                    case 'PUT':
+                        this.fire(
+                            'rest-put-response',
+                            {'response': e.detail.response, restClient: this, isEntityRequest: isEntityRequest}
+                        );
+                        break;
+                    case 'PATCH':
+                        this.fire(
+                            'rest-patch-response',
+                            {'response': e.detail.response, restClient: this, isEntityRequest: isEntityRequest}
+                        );
+                        break;
+                    case 'DELETE':
+                        this.fire(
+                            'rest-delete-response',
+                            {'response': e.detail.response, restClient: this, isEntityRequest: isEntityRequest}
+                        );
+                        break;
+                }
+            },
+
+            /**
+             * Error response handler
+             *
+             * @param e
+             */
+            errorRestListener: function (e) {
+                this.fire('rest-error', {'response': e.detail.request.response, restClient: this});
+            },
+
+            get: function() {
+                this.createRequest('GET');
+            },
+
+            getAll: function(query) {
+                var _query = {"page": this.page, "page_size": this.pageSize};
+                if (query !== null && query instanceof Object) {
+                    for (var key in query) {
+                        _query[key] = query[key].toString();
+                    }
+                }
+                this.createRequest('GET', null, null, _query);
+            },
+
+            post: function (data) {
+                this.createRequest('POST', data);
+            },
+
+            put: function (data) {
+                this.createRequest('PUT', data);
+            },
+
+            patch: function (data) {
+                this.createRequest('PATCH', data);
+            },
+
+            delete: function() {
+                this.createRequest('DELETE');
+            }
+        });
+    </script>
+
+</dom-module>
