@@ -33,7 +33,7 @@
             ],
 
             listeners: {
-                'submit': '_onSubmit'
+                'submit': '_onSubmit',
             },
 
             attached : function() {
@@ -47,6 +47,21 @@
 
                 this.authClient.$.oauthClient.$.ironAjax.addEventListener('error', this._responseAuthFormErrorListener.bind(this));
                 this.authClient.$.oauthClient.$.ironAjax.addEventListener('request', this._resetErrorMessage.bind(this));
+                this.authClient.addEventListener('loading-changed', this.loadingChanged.bind(this));
+            },
+
+            loadingChanged: function(e) {
+
+                switch (true) {
+                    case (e.detail.value == true) :
+                        console.log('TRUE', e.detail.value);
+                        this._setLoading(e.detail.value);
+                        break;
+                    case  (this.loading == true) :
+                        console.log('FALSE', e.detail.value);
+                        this._setLoading(e.detail.value);
+                        break;
+                }
             },
 
             _resetErrorMessage: function (e) {
