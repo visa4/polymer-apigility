@@ -61,11 +61,9 @@
 
                 switch (true) {
                     case (e.detail.value == true) :
-                        console.log('TRUE', e.detail.value);
                         this._setLoading(e.detail.value);
                         break;
                     case  (this.loading == true) :
-                        console.log('FALSE', e.detail.value);
                         this._setLoading(e.detail.value);
                         break;
                 }
