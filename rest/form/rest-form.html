@@ -83,7 +83,7 @@
              */
             _getResponseListener: function (event) {
                 if (event.detail.isEntityRequest) {
-                    this._populateValues(event.detail.restClient.entity);
+                    this._populateValues(event.detail.response);
                 }
             },
 
@@ -92,7 +92,7 @@
              */
             _postResponseListener: function (event) {
                 this.reset();
-                this.identify = event.detail.restClient.entity.id;
+                this.identify = event.detail.response.id;
                 this._dispatchResponse(event);
             },
 
