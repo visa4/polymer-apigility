@@ -80,7 +80,7 @@
             this.$.ironAjax.headers = this.requestHeaders(headers);
             this.$.ironAjax.params  = this.requestQuery(queries);
             this.$.ironAjax.method  = (method) ? method : this.method;
-            this.$.ironAjax.body    = (data) ? data : null;
+            this.$.ironAjax.body    = (data) ? data : '';
 
             var event = this.fire('api-request-presend',  this.$.ironAjax, {}, {cancelable: true});
 
