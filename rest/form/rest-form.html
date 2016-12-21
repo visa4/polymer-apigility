@@ -151,6 +151,7 @@
                     return;
                 }
 
+                var event = this.fire('rest-form-presubmit', {'form': this}, {cancelable: true});
                 var data = {};
                 switch (this.contentType) {
                     case 'multipart/form-data':
@@ -162,7 +163,6 @@
                         data = this.serialize();
                 }
 
-                var event = this.fire('rest-form-presubmit', {'form': this}, {cancelable: true});
                 if(event.defaultPrevented) {
                    return;
                 }
