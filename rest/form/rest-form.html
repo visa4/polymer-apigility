@@ -116,14 +116,14 @@
                 this.fire('rest-form-invalid-remote', {'ironRequest': event.detail.ironRequest});
                 var bodyResponse = event.detail.response;
                 switch (true) {
-                    case event.detail.response.status == 422:
+                    case event.detail.response && event.detail.response.status == 422:
                         if (bodyResponse.validation_messages) {
                             this.setErrorMessages(bodyResponse.validation_messages);
                         } else {
                             this._setErrorMessage(event.detail.response.title);
                         }
                         break;
-                    case event.detail.response.status >= 500:
+                    case event.detail.response && event.detail.response.status >= 500:
                         if (event.detail.response.detail) {
                             this._setErrorMessage(event.detail.response.detail);
                         } else {
