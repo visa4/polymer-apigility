@@ -270,6 +270,14 @@
                         el.value = this._customElementsInitialValues[i];
                     }
                 }
+                // reset paper chechbox
+                var paperCheckbox = this.querySelectorAll('paper-checkbox');
+                if (paperCheckbox) {
+                    for (var el, i = 0; el = paperCheckbox[i], i < paperCheckbox.length; i++) {
+
+                        el.checked = false;
+                    }
+                }
             }, 1);
         },
 
