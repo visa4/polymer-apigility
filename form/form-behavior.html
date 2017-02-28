@@ -146,7 +146,7 @@
             // Go through all of the registered custom components.
             for (var i = 0; el = this._customElements[i], i < this._customElements.length; i++) {
                 value = data[el.name] || inflatedData[el.name];
-                if (value) {
+                if (value || value === 0) {
                     el[el.getPropertyInfo('bindValue').defined ? 'bindValue' : 'value'] = value;
                     el.invalid = false;
                 }
